@@ -11,7 +11,7 @@
               <Dropdown class="flex flex-row p-2 border-round-xl" v-model="selectedHDR" :options="hdrOptions" placeholder="Select an HDR" @change="updateHDR" />
     </div>
   
-   
+    <Divider layout="vertical" /> 
 
 
             <div class="text-right flex flex-column w-6 justify-content-left justify-content-between px-8 py-4" >
@@ -41,6 +41,8 @@
         </div>
 
        </div>
+
+
       <div class="col-3 flex flex-column justify-content-between gap-6 py-4">
               
             <div class="flex flex-row justify-content-start ">
@@ -124,7 +126,7 @@ const { getAssetNames } = useEnvironmentLoader(/* scene, renderer */); // Pass y
 
 // Reactive references for selected values
 const selectedSkybox = ref('');
-const selectedFloor = ref('');
+const selectedFloor = ref('bathroom_floor.glb');
 const selectedHDR = ref('');
 const sphereColor = ref('#8c32ff');
 const emissiveColor = ref('#ffffff');
