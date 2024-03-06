@@ -1,6 +1,10 @@
 <!-- app.vue  -->
 <template>
-  <div id="app">
+    <div id="app">
+
+    <div class="flex flex-row justify-content-end mr-4 my-2">
+      <ToggleButton v-model="isDarkMode" onLabel="" offLabel="" onIcon="pi pi-moon" offIcon="pi pi-sun" @change="toggleTheme" class="w-3rem" />
+    </div>
  <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
  <HomeView   />
  
@@ -9,7 +13,27 @@
 
 <script setup>
 import HomeView from './views/HomeView.vue'
+import ToggleButton from 'primevue/togglebutton'
 
+import { ref } from 'vue';
+import { usePrimeVue } from 'primevue/config';
+
+const PrimeVue = usePrimeVue();
+const isDarkMode = ref(false); // Tracks the theme mode
+
+function toggleTheme() {
+  if (isDarkMode.value) {
+    // Switch to dark theme
+    PrimeVue.changeTheme('aura-light-purple', 'aura-dark-purple', 'theme-link', () => {
+      console.log('Theme switched to dark');
+    });
+  } else {
+    // Switch to light theme
+    PrimeVue.changeTheme('aura-dark-purple', 'aura-light-purple', 'theme-link', () => {
+      console.log('Theme switched to light');
+    });
+  }
+}
 
 </script>
 
@@ -21,5 +45,8 @@ import HomeView from './views/HomeView.vue'
   text-align: center;
   color: #2c3e50;
   margin-top: 2px;
+  margin: -0.3rem;
+  padding: 0.5rem;
 }
+
 </style>

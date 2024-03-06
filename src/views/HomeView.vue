@@ -1,5 +1,7 @@
 <template>
+
   <div class="grid w-12 overflow-hidden ">
+  
     <!-- Row 1 -->
     <div class="col-6 pl-2 ">
       <!-- Column 1: 60% width -->
@@ -22,6 +24,7 @@
 <script setup>
 import ThreeViewer from '@/components/ThreeViewer.vue';
 import AdminControls from '@/components/AdminControls.vue';
+
 </script>
 
 <style scoped>
