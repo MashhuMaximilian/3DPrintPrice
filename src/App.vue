@@ -49,4 +49,13 @@ function toggleTheme() {
   padding: 0.5rem;
 }
 
+
+.dark-theme {
+  background-color: var(--primary-color); /* Use the primary color from the dark theme */
+}
+
+.light-theme {
+  --text-color: #2c3e50; /* Dark text color for light themes */
+  background: var(--primary-300); /* Use the background color from the light theme */
+}
 </style>

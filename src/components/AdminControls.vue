@@ -4,12 +4,13 @@
 
 <template #content>
 <div class="flex flex-row justify-content-evenly">
-  <div class="text-center flex flex-column w-3 justify-content-left justify-content-between py-4" >
-      
-      <Dropdown class="flex flex-row p-2 border-round-xl" v-model="selectedSkybox" :options="skyboxOptions" placeholder="Select a Skybox" @change="updateSkybox" />
-              <Dropdown class="flex flex-row p-2 my-3 border-round-xl" v-model="selectedFloor" :options="floorOptions" placeholder="Select a Floor" @change="updateFloor" />
-              <Dropdown class="flex flex-row p-2 border-round-xl" v-model="selectedHDR" :options="hdrOptions" placeholder="Select an HDR" @change="updateHDR" />
-    </div>
+
+  <div  class="text-center flex flex-column w-3 justify-content-left justify-content-between py-4">
+    <Dropdown class="flex flex-row p-2 border-round-xl" v-model="selectedSkybox"  :options="skyboxOptions" placeholder="Select a Skybox" @change="updateSkybox" />
+    <Dropdown class="flex flex-row p-2 border-round-xl" v-model="selectedFloor" :options="floorOptions" placeholder="Select a Floor" @change="updateFloor" />
+<Dropdown class="flex flex-row p-2 border-round-xl" v-model="selectedHDR" :options="hdrOptions" placeholder="Select an HDR" @change="updateHDR" />
+
+  </div>
 
 
             <div class="text-right flex flex-column w-6 justify-content-left justify-content-between px-8 py-4" >
@@ -89,19 +90,6 @@
 
 
 
-
-       
-
-
-
-
-
-    
-
-
-
-
-
 </template>
 
 <script setup>
@@ -118,14 +106,57 @@ import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 
 
-
 const store = useStore();
 const { getAssetNames } = useEnvironmentLoader(/* scene, renderer */); // Pass your scene and renderer
 
-// Reactive references for selected values
-const selectedSkybox = ref('');
-const selectedFloor = ref('');
-const selectedHDR = ref('');
+
+const normalizeDropdownEventValue = (event) => {
+  if (event && typeof event === 'object' && event.value) {
+    return event.value; // Extract value from event object
+  }
+  return event; // Return the direct value
+};
+
+
+const selectedSkybox = computed({
+  get: () => {
+    const value = store.state.selectedSkybox;
+    console.log('Getting selectedSkybox:', value); // Log retrieved value
+    return value;
+  },
+  set: (value) => {
+    console.log('Setting selectedSkybox:', value); // Log assigned value
+    store.dispatch('updateSkybox', value);
+  }
+});
+
+const selectedFloor = computed({
+  get: () => {
+    const value = store.state.selectedFloor;
+    console.log('Getting selectedFloor:', value);
+    return value;
+  },
+  set: (value) => {
+    console.log('Setting selectedFloor:', value);
+    console.log('Dispatching updateFloor:', value === 'No Floor' ? null : value);
+    store.dispatch('updateFloor', value === 'No Floor' ? null : value);
+  }
+});
+
+const selectedHDR = computed({
+  get: () => {
+    const value = store.state.selectedHDR;
+    console.log('Getting selectedHDR:', value);
+    return value;
+  },
+  set: (value) => {
+    console.log('Setting selectedHDR:', value);
+    console.log('Dispatching updateHDR:', value === 'No HDR' ? null : value);
+    store.dispatch('updateHDR', value === 'No HDR' ? null : value);
+  }
+});
+
+
 const sphereColor = ref('#8c32ff');
 const emissiveColor = ref('#ffffff');
 
@@ -163,22 +194,21 @@ const floorOptions = computed(() => ['No Floor', ...getAssetNames('floor')]);
 const hdrOptions = computed(() => ['No HDR', ...getAssetNames('hdr')]);
 
 // Define update functions that dispatch actions to the store
-function updateSkybox(value) { store.dispatch('updateSkybox', value); }
-// function updateHDR(value) {   store.dispatch('updateHDR', value);}   
 
-
-function updateHDR(value) {
-
-  store.dispatch('updateHDR', value === 'No HDR' ? null : value);
-  console.log('HDR updated admin ')
-
-}
-
-// Modify the updateFloor function to dispatch Vuex action
-const updateFloor = (value) => {
-  store.dispatch('updateFloor', value === 'No Floor' ? null : value);
+const updateSkybox = (event) => {
+  const value = normalizeDropdownEventValue(event);
+  store.dispatch('updateSkybox', value);
 };
 
+const updateFloor = (event) => {
+  const value = normalizeDropdownEventValue(event);
+  store.dispatch('updateFloor', value);
+};
+
+const updateHDR = (event) => {
+  const value = normalizeDropdownEventValue(event);
+  store.dispatch('updateHDR', value);
+};
  
 
 

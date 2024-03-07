@@ -49,7 +49,7 @@ const   { update: updateControls } = useViewerControls(camera, renderer);
 // const floorColor = computed(() => store.state.floorProperties.floorColor);
 
 
-  // Correct usage of useBackgroundSphere and useEnvironmentLoader
+  // Correct usage of useBackgroundSphere and useAssetLoader
   
 const { setBackgroundSphere, toggleBackgroundSphereVisibility } = useBackgroundSphere(scene.value);
 // Correct usage of useEnvironmentLoader, ensure loadHDR is included
@@ -70,54 +70,57 @@ const { loadSkybox, loadFloor, setHDREnvironment, toggleAssetVisibility } = useE
 
 
 
-  watch(() => store.state.selectedSkybox, (newSkybox) => {
-  if(newSkybox && newSkybox.value) {
-    console.log('Loading skybox with filename:', newSkybox.value); // Correctly log the filename
-    loadSkybox(newSkybox.value); // Pass the string filename to loadSkybox
-    toggleBackgroundSphereVisibility(scene, false);
+
+
+// Then, inside your setup function or script
+
+// Ensure the scene update functions are correctly called within watchers
+watch(() => store.state.selectedSkybox, (newSkybox) => {
+  if (newSkybox) {
+    console.log('Loading skybox with filename:', newSkybox);
+    loadSkybox(newSkybox); // Assumed that 'loadSkybox' expects a string filename
+    toggleBackgroundSphereVisibility(scene, false); // Adjust this call if necessary
   }
-});
-
-
-
+}, { immediate: true });
 
 watch(() => store.state.selectedFloor, (newFloor) => {
-  const floorFilename = newFloor ? newFloor.value : 'No Floor'; // Use 'No Floor' as a default
-  if (floorFilename === 'No Floor') {
-    toggleAssetVisibility('floor', false); // Hides the floor
+  if (newFloor) {
+    console.log('Loading floor with filename:', newFloor);
+    loadFloor(newFloor, store.state.floorProperties.floorColor); // Ensure loadFloor expects a string filename and a color
   } else {
-    toggleAssetVisibility('floor', true); // Shows the floor
-    console.log('Loading floor with filename:', floorFilename);
-    loadFloor(floorFilename, store.state.floorProperties.floorColor); // Pass the color as well
+    toggleAssetVisibility('floor', false); // This hides the floor if 'newFloor' is null or undefined
   }
-});
-
+}, { immediate: true });
 
 
 watch(() => store.state.selectedHDR, (newHDR) => {
-  console.log('HDR watcher triggered with newHDR:', newHDR);
-
-  const hdrFilename = newHDR && newHDR.value ? newHDR.value : null;
-  if (hdrFilename === 'No HDR') {
-    console.log('No HDR selected, attempting to clear HDR environment');
-    setHDREnvironment(null); // Adjusted to pass null for clarity
+  if (newHDR) {
+    console.log('Setting HDR environment with filename:', newHDR);
+    setHDREnvironment(newHDR); // Assumes 'setHDREnvironment' expects a string filename or null
   } else {
-    toggleAssetVisibility('hdr', true); // Shows the HDR
-    console.log('Setting HDR environment with filename:', hdrFilename);
-    setHDREnvironment(hdrFilename);
+    setHDREnvironment(null); // Clear the HDR environment if 'newHDR' is null or undefined
   }
-});
+}, { immediate: true });
+
+// Similar adjustments for any other properties you're watching from the Vuex store
+
 
 watch(() => store.state.floorProperties.floorColor, (newColor) => {
+  const filename = store.state.selectedFloor; // Ensure this is correctly accessing the selected floor's filename
   console.log(`Watcher: Floor color changed to ${newColor}`);
-  const filename = store.state.selectedFloor.value; 
   if (filename) {
-    loadFloor(filename, `#${newColor}`); 
+    console.log(`Loading floor with filename: ${filename} and color: ${newColor}`);
+    loadFloor(filename, `#${newColor}`); // Assuming loadFloor function takes the filename and hex color code
   } else {
     console.error("Filename is not defined.");
   }
-});
+}, { deep: true, immediate: true });
 
+
+  // Load default assets
+  loadSkybox(store.state.selectedSkybox);
+  loadFloor(store.state.selectedFloor, store.state.floorProperties.floorColor);
+  setHDREnvironment(store.state.selectedHDR);
 
 
 

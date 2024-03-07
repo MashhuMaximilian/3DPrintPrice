@@ -7,7 +7,7 @@
       <!-- Column 1: 60% width -->
       <ThreeViewer />
     </div>
-    <div class="col-4">
+    <div class="flex flex-grow justify-content-evenly">
       <!-- Column 2: 40% width -->
       <h1>Test</h1>
     </div>

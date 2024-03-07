@@ -3,9 +3,9 @@ import { createStore } from 'vuex';
 
 const store = createStore({
   state: {
-    selectedSkybox: null,
-    selectedFloor: null,
-    selectedHDR: null,
+    selectedSkybox: 'lightbluesky.glb',
+    selectedFloor: 'pinkfloor2.glb',
+    selectedHDR:'spot1Lux.hdr',
 
 
     floorProperties: {
@@ -23,13 +23,19 @@ const store = createStore({
     },
   },
   mutations: {
-    updateSkybox(state, skybox) { state.selectedSkybox = skybox; },
+    updateSkybox(state, value) {
+      state.selectedSkybox = value;
+      console.log('Updated state.selectedSkybox:', value);
+    },
+    updateFloor(state, floor) {
+      state.selectedFloor = floor;
+      console.log('Updated state.selectedFloor:', floor);
+    },
+    updateHDR(state, value) {
+      state.selectedHDR = value;
+      console.log('Updated state.selectedHDR:', value);
+    },
   
-
-    updateFloor(state, floor) { state.selectedFloor = floor === 'No Floor' ? null : floor;},
-    updateHDR(state, hdr) { console.log('Mutating HDR state with:', hdr); state.selectedHDR = hdr === 'No HDR' ? null : hdr; },
-
-
 
     updateSphereProperty(state, { property, value }) {
       if (property in state.sphereProperties) {
@@ -57,9 +63,23 @@ const store = createStore({
       commit('updateFloorColor', color); // Committing the correct mutation
     },
     
-    updateSkybox({ commit }, skybox) { commit('updateSkybox', skybox); },
-    updateFloor({ commit }, floor) { commit('updateFloor', floor); },
-    updateHDR({ commit }, hdr) { commit('updateHDR', hdr); },
+    updateSkybox({ commit }, value) {
+      console.log('Received value in updateSkybox:', value);
+      commit('updateSkybox', value);
+    },
+
+    updateFloor({ commit, state }, newFloor) {
+      if (newFloor !== state.selectedFloor) {
+        commit('updateFloor', newFloor);
+      } else {
+        console.log('Ignoring redundant update for selectedFloor');
+      }
+    },
+    
+    updateHDR({ commit }, value) {
+      console.log('Received value in updateHDR:', value);
+      commit('updateHDR', value === 'No HDR' ? null : value);
+    },
 
     // updateSphereColor({ commit }, color) { commit('updateSphereColor', color); },
 
