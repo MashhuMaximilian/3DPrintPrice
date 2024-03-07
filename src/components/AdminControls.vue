@@ -6,9 +6,9 @@
 <div class="flex flex-row justify-content-evenly">
 
   <div  class="text-center flex flex-column w-3 justify-content-left justify-content-between py-4">
-    <Dropdown class="flex flex-row p-2 border-round-xl" v-model="selectedSkybox"  :options="skyboxOptions" placeholder="Select a Skybox" @change="updateSkybox" />
-    <Dropdown class="flex flex-row p-2 border-round-xl" v-model="selectedFloor" :options="floorOptions" placeholder="Select a Floor" @change="updateFloor" />
-<Dropdown class="flex flex-row p-2 border-round-xl" v-model="selectedHDR" :options="hdrOptions" placeholder="Select an HDR" @change="updateHDR" />
+    <Dropdown class="flex flex-row p-2 border-round-xl" v-model="selectedSkybox" :options="skyboxOptions" placeholder="Select a Skybox" @change="updateEnvironmentProperty('Skybox', $event)" />
+  <Dropdown class="flex flex-row p-2 border-round-xl"  v-model="selectedFloor" :options="floorOptions" placeholder="Select a Floor" @change="updateEnvironmentProperty('Floor', $event)" />
+  <Dropdown class="flex flex-row p-2 border-round-xl" v-model="selectedHDR" :options="hdrOptions" placeholder="Select an HDR" @change="updateEnvironmentProperty('HDR', $event)" />
 
   </div>
 
@@ -17,37 +17,38 @@
 
             <div class="text-right flex flex-row justify-content-left vertical-align-middle" >
               <span class="w-6  mr-4 font-medium">Metalness</span>
-              <Slider class="w-full p-2 border-round-md"  v-model="metalness" :model-value="metalness" @update:model-value="value => updateSphereProperty('metalness', value)" :min=0 :max=1 :step="0.01"/> 
+              <Slider class="w-full p-2 border-round-md" v-model="metalness" @change="updateSphereProperty('metalness', metalness)" :min="0" :max="1" :step="0.01" />
+
             </div>
             <div class="text-right flex flex-row justify-content-left" >
                       <span class="w-6 mr-4 font-medium">Roughness</span>
-                      <Slider class="w-full p-2 border-round-md" v-model="roughness"  :model-value="roughness" @update:model-value="value => updateSphereProperty('roughness', value)" :min="0" :max="1" :step="0.01"/>
+                      <Slider class="w-full p-2 border-round-md"  v-model="roughness" :min="0" :max="1" :step="0.01" @change="updateSphereProperty('roughness', roughness)" />
              </div>
 
              <div class="text-right flex flex-row justify-content-left" >
                 <span class="w-6  mr-4 font-medium">Sky Glow Intensity</span>
-              <Slider class="w-full p-2 border-round-md" v-model="emissiveIntensity"  :model-value="emissiveIntensity" @update:model-value="value => updateSphereProperty('emissiveIntensity', value)" :min="0" :max="1" :step="0.01"/>  
+                <Slider class="w-full p-2 border-round-md" v-model="emissiveIntensity" :min="0" :max="1" :step="0.01" @change="updateSphereProperty('emissiveIntensity', emissiveIntensity)" />
             </div>
 
             <div class="text-right flex flex-row justify-content-left" >
               <span class="w-6  mr-4 font-medium">Effect on Objects</span>
-            <Slider class="w-full p-2 border-round-md" v-model="envMapIntensity" :model-value="envMapIntensity" @update:model-value="value => updateSphereProperty('envMapIntensity', value)" :min="0" :max="1" :step="0.01"/>
+              <Slider class="w-full p-2 border-round-md" v-model="envMapIntensity" :min="0" :max="1" :step="0.01" @change="updateSphereProperty('envMapIntensity', emissiveIntensity)" />
           </div>
 
           <div class="text-right flex flex-row justify-content-left" >
                 <span class="w-6 mr-4 font-medium">Opacity</span>
-            <Slider class="w-full p-2 border-round-md" v-model="opacity"  :model-value="opacity" @update:model-value="value => updateSphereProperty('opacity', value)" :min="0" :max="1" :step="0.01"/>
+                <Slider class="w-full p-2 border-round-md" v-model="opacity" :min="0" :max="1" :step="0.01" @change="updateSphereProperty('opacity', opacity)" />
         </div>
 
        </div>
 
 
       <div class="col-3 flex flex-column justify-content-between gap-6 py-4">
-              
-            <div class="flex flex-row justify-content-start ">
+
+                <div class="flex flex-row justify-content-start ">
                   <div class="w-full">
                 <IconField iconPosition="left"> <InputIcon class="pi pi-palette px-1"> </InputIcon>
-                <InputText class="w-12" id="color" v-model="sphereColor" @change="() => updateSphereProperty('sphereColor', sphereColor)" placeholder="Enter sky color"  /></IconField>
+                  <InputText class="w-12" id="sphereColor" v-model="sphereColor" @input="() => updateSphereProperty('sphereColor', sphereColor)" placeholder="Enter glow color" /></IconField>
                 </div>
                 <div class="w-11 p-2">
                   <ColorPicker v-model="sphereColor" @change="value => updateSphereProperty('sphereColor', value)" />
@@ -73,7 +74,7 @@
                   <InputText class="w-12" id="emissive" v-model="emissiveColor" @input="() => updateSphereProperty('emissiveColor', emissiveColor)" placeholder="Enter glow color" /></IconField>
                 </div>
                 <div class="w-11 p-2 justify-content-end">
-                  <ColorPicker v-model="emissiveColor" @change="value => updateSphereProperty('emissiveColor', value)" />
+                  <ColorPicker v-model="emissiveColor" @change="updateSphereProperty('emissiveColor', $event)" />
                   <span class="w-12 font-medium mx-2">Sky Glow</span> 
                 </div>
                 </div>
@@ -109,13 +110,6 @@ import InputIcon from 'primevue/inputicon';
 const store = useStore();
 const { getAssetNames } = useEnvironmentLoader(/* scene, renderer */); // Pass your scene and renderer
 
-
-const normalizeDropdownEventValue = (event) => {
-  if (event && typeof event === 'object' && event.value) {
-    return event.value; // Extract value from event object
-  }
-  return event; // Return the direct value
-};
 
 
 const selectedSkybox = computed({
@@ -170,6 +164,17 @@ const opacity = ref(0.9);
 
 const floorColor = ref('#8c52ff');
 
+const normalizeDropdownEventValue = (event) => {
+  if (event && typeof event === 'object' && event.value) {
+    return event.value;
+  }
+  return event;
+};
+
+const updateEnvironmentProperty = (property, event) => {
+  const value = normalizeDropdownEventValue(event);
+  store.dispatch(`update${property}`, value);
+};
 
 
 // Existing method for updating sphere properties
@@ -195,21 +200,6 @@ const hdrOptions = computed(() => ['No HDR', ...getAssetNames('hdr')]);
 
 // Define update functions that dispatch actions to the store
 
-const updateSkybox = (event) => {
-  const value = normalizeDropdownEventValue(event);
-  store.dispatch('updateSkybox', value);
-};
-
-const updateFloor = (event) => {
-  const value = normalizeDropdownEventValue(event);
-  store.dispatch('updateFloor', value);
-};
-
-const updateHDR = (event) => {
-  const value = normalizeDropdownEventValue(event);
-  store.dispatch('updateHDR', value);
-};
- 
 
 
 

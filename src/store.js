@@ -42,7 +42,6 @@ const store = createStore({
         state.sphereProperties[property] = value;
       }
     },
-
     updateFloorColor(state, color) {
       console.log(`Mutation: Changing floor color to ${color}`);
       state.floorProperties.floorColor = color;
