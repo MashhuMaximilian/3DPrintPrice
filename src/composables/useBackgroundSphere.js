@@ -18,7 +18,7 @@ export function useBackgroundSphere() {
     let sphere = scene.getObjectByName('backgroundSphere');
     if (!sphere) {
       // If no sphere exists, create a new one
-      const geometry = new THREE.SphereGeometry(75, 75, 75);
+      const geometry = new THREE.SphereGeometry(150, 150, 150);
       const material = new THREE.MeshStandardMaterial({
         color: sphereColor, // Set sphere color
         metalness: properties.metalness,

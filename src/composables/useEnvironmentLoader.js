@@ -1,7 +1,8 @@
+import * as THREE from 'three';
+
 // useAssetLoader.js
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader';
-import * as THREE from 'three';
 
 // Define contexts for assets
 const skyboxesContext = require.context('@/assets/skyboxes', false, /\.glb$/);
@@ -56,7 +57,7 @@ function loadFloor(filename, color) {
       scene.remove(scene.userData.floor);
     }
     // Proceed with setting up the new floor object
-    gltf.scene.scale.set(50, 1, 50); // Scale the floor object
+    gltf.scene.scale.set(150, 1, 150); // Scale the floor object
     gltf.scene.name = 'floor'; // Name it for future reference
 
     // Apply the color if provided

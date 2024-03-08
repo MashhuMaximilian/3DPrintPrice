@@ -17,7 +17,7 @@ import { useBackgroundSphere} from '../composables/useBackgroundSphere'
 import { useEnvironmentLoader} from '../composables/useEnvironmentLoader'
 import { useViewerControls } from '../composables/viewerControls';
 
-
+import { usePrinterLoader } from '@/composables/usePrinter';
 
 
 
@@ -46,7 +46,6 @@ onMounted(() => {
 const   { update: updateControls } = useViewerControls(camera, renderer);
 
 
-// const floorColor = computed(() => store.state.floorProperties.floorColor);
 
 
   // Correct usage of useBackgroundSphere and useAssetLoader
@@ -122,6 +121,20 @@ watch(() => store.state.floorProperties.floorColor, (newColor) => {
   loadFloor(store.state.selectedFloor, store.state.floorProperties.floorColor);
   setHDREnvironment(store.state.selectedHDR);
 
+//load default printer
+const { loadPrinter } = usePrinterLoader(scene);
+
+    const printerType = 'resinprinters';
+    const printerName = 'CrealityLD002H';
+    const printerFileName = 'LD002H';
+    const textureName = 'Gltf_Import';
+
+    try {
+      loadPrinter(printerType, printerName, printerFileName, textureName);
+    } catch (error) {
+      console.error('Error loading printer model:', error);
+      // Handle the error appropriately (e.g., display an error message to the user)
+    }
 
 
   const geometry = new THREE.BoxGeometry();

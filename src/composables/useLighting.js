@@ -1,9 +1,7 @@
 import * as THREE from 'three';
 
-
-
 export function useLighting(scene) {
-  const ambientLight = new THREE.AmbientLight(0xcccccc, 0.4); // Adjust intensity and color for subtle ambient light
+  const ambientLight = new THREE.AmbientLight(0xcccccc, 0.8); // Adjust intensity and color for subtle ambient light
 
   // Key light (main light source)
   const keyLight = new THREE.DirectionalLight(0xffffff, 1.0); // Adjust intensity here
@@ -17,7 +15,13 @@ export function useLighting(scene) {
   const rimLight = new THREE.SpotLight(0xffffff, 0.5, 0, Math.PI / 8, 1); // Adjust intensity, angle, and falloff
   rimLight.position.set(0, 0, 80); // Adjust position for rim lighting effect
 
-  scene.add(ambientLight, keyLight, fillLight, rimLight);
+
+    // // Add a PointLight at the center of the model
+    const innerLight = new THREE.PointLight(0xffffff, 0.6, 1);
+    innerLight.position.set(11, 40, 11);
+
+
+  scene.add(ambientLight, keyLight, fillLight, rimLight, innerLight);
 
   // Configure shadow maps for key light and fill light
   keyLight.castShadow = true;

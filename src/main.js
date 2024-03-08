@@ -1,12 +1,16 @@
-//main.js
-import { createApp } from 'vue';
-import App from './App.vue';
-import router from './router';
-import PrimeVue from 'primevue/config';
 import 'primevue/resources/primevue.min.css'; // Core CSS
 import 'primeicons/primeicons.css'; // Icons
 import 'primeflex/primeflex.css';
+
+import App from './App.vue';
+import PrimeVue from 'primevue/config';
+//main.js
+import { createApp } from 'vue';
+import firebaseApp from '../firebaseStorage';
+import router from './router';
 import store from './store'; // Import the store from the file you defined it in
+
+console.log(firebaseApp); // If you want to ensure it's imported correctly
 
 
 
