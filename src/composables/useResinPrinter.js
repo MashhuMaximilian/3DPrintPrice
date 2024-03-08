@@ -1,6 +1,7 @@
+import * as THREE from 'three';
+
 // useResinPrinter.js
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import * as THREE from 'three';
 
 export function useResinPrinter(scene) {
   function loadGLTFModel() {
@@ -28,8 +29,8 @@ export function useResinPrinter(scene) {
       scene.add(gltf.scene);
 
       const center = new THREE.Box3().setFromObject(gltf.scene).getCenter(new THREE.Vector3());
-      const innerLight = new THREE.PointLight(0xffffff, 0.1, 10);
-      innerLight.position.set(center.x, center.y, center.z);
+      const innerLight = new THREE.PointLight(0xffffff, 0.4, 1);
+      innerLight.position.set(center.x, center.y + 10, center.z);
       scene.add(innerLight);
     });
   }
