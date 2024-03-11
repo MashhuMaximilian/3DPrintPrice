@@ -1,15 +1,55 @@
 import * as THREE from 'three';
 
+import { getDownloadURL, getStorage, listAll, ref as storageRef } from 'firebase/storage';
+import { onMounted, ref } from 'vue';
+
 // useAssetLoader.js
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader';
 
 // Define contexts for assets
-const skyboxesContext = require.context('@/assets/skyboxes', false, /\.glb$/);
-const floorsContext = require.context('@/assets/floors', false, /\.glb$/);
-const hdrsContext = require.context('@/assets/hdrs', false, /\.hdr$/);
+// const skyboxesContext = require.context('@/assets/skyboxes', false, /\.glb$/);
+// const floorsContext = require.context('@/assets/floors', false, /\.glb$/);
+// const hdrsContext = require.context('@/assets/hdrs', false, /\.hdr$/);
 
 export function useEnvironmentLoader(scene, renderer) {
+
+  const storage = getStorage(); // Make sure Firebase is initialized before calling this
+
+  const skyboxes = ref([]);
+  const floors = ref([]);
+  const hdrs = ref([]);
+
+
+
+  // Helper function to fetch asset URL from Firebase Storage
+  async function fetchAssetURL(assetPath) {
+    const fileRef = storageRef(storage, assetPath);
+    try {
+      return await getDownloadURL(fileRef);
+    } catch (error) {
+      console.error(`Error fetching asset URL for ${assetPath}:`, error);
+      return ''; // Return an empty string or a default URL in case of an error
+    }
+  }
+  
+  async function fetchAssetNames(folderPath, refList) {
+    const listRef = storageRef(storage, folderPath);
+    try {
+      const res = await listAll(listRef);
+      refList.value = res.items.map(item => item.name);
+    } catch (error) {
+      console.error(`Error fetching asset names for ${folderPath}:`, error);
+      refList.value = [];
+    }
+  }
+
+
+  onMounted(async () => {
+    await fetchAssetNames('assets/skyboxes', skyboxes);
+    await fetchAssetNames('/assets/floors', floors);
+    await fetchAssetNames('/assets/hdrs', hdrs);
+  });
 
   // Helper function to dynamically load GLTF assets
   function loadGLTF(path, callback) {
@@ -23,21 +63,33 @@ export function useEnvironmentLoader(scene, renderer) {
 
   
 // Dynamically load a skybox
-function loadSkybox(filename) {
-  console.log('loadSkybox filename:', filename);
-  const modulePath = skyboxesContext(`./${filename}`).default;
-  loadGLTF(modulePath, (gltf) => {
+async function loadSkybox(filename) {
+  if (filename === 'No Skybox') {
+    // Remove existing skybox if present
+    if (scene.userData.skybox) {
+      scene.remove(scene.userData.skybox);
+      scene.userData.skybox = null;
+    }
+    return; // Exit the function to avoid further execution
+  }
+
+  // Continue with loading the skybox if a valid filename is provided
+  const skyboxPath = `assets/skyboxes/${filename}`; // Ensure your filenames include the .glb extension
+  const skyboxURL = await fetchAssetURL(skyboxPath);
+
+  await loadGLTF(skyboxURL, (gltf) => {
     // Remove existing skybox if present
     if (scene.userData.skybox) {
       scene.remove(scene.userData.skybox);
     }
-    // gltf.scene.scale.set(75, 75, 75); // Scale the floor object
-    scene.userData.skybox = gltf.scene; // Update userData with the new skybox
+    scene.userData.skybox = gltf.scene;
     scene.add(gltf.scene);
   });
 }
 
-function loadFloor(filename, color) {
+
+
+async function loadFloor(filename, color) {
   // Early exit if 'No Floor' is selected
   if (filename === 'No Floor') {
     console.log('No floor is selected, visibility will be toggled off.');
@@ -50,8 +102,10 @@ function loadFloor(filename, color) {
 
   // Continue with loading the floor if a valid filename is provided
   console.log(`Loading floor: ${filename} with color ${color}`);
-  const modulePath = floorsContext(`./${filename}`).default;
-  loadGLTF(modulePath, (gltf) => {
+  const floorPath = `assets/floors/${filename}`; // Ensure your filenames include the .glb extension
+  const floorURL = await fetchAssetURL(floorPath);
+
+  await loadGLTF(floorURL, (gltf) => {
     // Ensure any existing floor is removed first
     if (scene.userData.floor) {
       scene.remove(scene.userData.floor);
@@ -77,9 +131,7 @@ function loadFloor(filename, color) {
   });
 }
 
-
-
-function setHDREnvironment(filename) {
+async function setHDREnvironment(filename) {
   // When "No HDR" is selected, clear the environment and return early
   if (filename === 'No HDR' || !filename) {
     console.log('No HDR is selected, clearing the HDR environment.');
@@ -88,9 +140,11 @@ function setHDREnvironment(filename) {
   }
 
   // Continue with HDR environment setup if a valid filename is provided
-  const modulePath = hdrsContext(`./${filename}`).default;
+  const hdrPath = `assets/hdrs/${filename}`; // Ensure your filenames include the .hdr extension
+  const hdrURL = await fetchAssetURL(hdrPath);
+
   const loader = new RGBELoader();
-  loader.load(modulePath, (texture) => {
+  loader.load(hdrURL, (texture) => {
     const pmremGenerator = new THREE.PMREMGenerator(renderer);
     scene.environment = pmremGenerator.fromEquirectangular(texture).texture;
     pmremGenerator.dispose();
@@ -99,24 +153,6 @@ function setHDREnvironment(filename) {
   });
 }
 
-  // Function to get asset names by type
-  function getAssetNames(type) {
-    let context;
-    switch (type) {
-      case 'skybox':
-        context = skyboxesContext;
-        break;
-      case 'floor':
-        context = floorsContext;
-        break;
-      case 'hdr':
-        context = hdrsContext;
-        break;
-      default:
-        throw new Error('Unknown asset type');
-    }
-    return context.keys().map(filename => filename.replace('./', ''));
-  }
 
   function removeAsset(type) {
     switch(type) {
@@ -134,8 +170,6 @@ function setHDREnvironment(filename) {
         break;
     }
   }
-
-  
   
   
   function toggleAssetVisibility(type, visible) {
@@ -162,8 +196,11 @@ return {
   loadSkybox,
   loadFloor,
   setHDREnvironment,
-  getAssetNames,
   removeAsset,
-  toggleAssetVisibility
+  toggleAssetVisibility,
+  fetchAssetNames,
+  skyboxes,
+  floors,
+  hdrs
 };
 }

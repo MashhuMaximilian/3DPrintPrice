@@ -1,0 +1,51 @@
+[debug] [2024-03-11T13:56:52.132Z] ----------------------------------------------------------------------
+[debug] [2024-03-11T13:56:52.134Z] Command:       /usr/local/bin/node /usr/local/bin/firebase deploy
+[debug] [2024-03-11T13:56:52.134Z] CLI Version:   13.4.1
+[debug] [2024-03-11T13:56:52.134Z] Platform:      darwin
+[debug] [2024-03-11T13:56:52.134Z] Node Version:  v20.3.1
+[debug] [2024-03-11T13:56:52.134Z] Time:          Mon Mar 11 2024 15:56:52 GMT+0200 (Eastern European Standard Time)
+[debug] [2024-03-11T13:56:52.134Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2024-03-11T13:56:52.168Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2024-03-11T13:56:52.169Z] > authorizing via signed-in user (m.catalin.ion@gmail.com)
+[debug] [2024-03-11T13:56:52.169Z] [iam] checking project dprintprice for permissions ["firebase.projects.get","firebasehosting.sites.update","firebaserules.releases.create","firebaserules.releases.update","firebaserules.rulesets.create"]
+[debug] [2024-03-11T13:56:52.169Z] > refreshing access token with scopes: []
+[debug] [2024-03-11T13:56:52.170Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2024-03-11T13:56:52.170Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2024-03-11T13:56:52.347Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2024-03-11T13:56:52.347Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2024-03-11T13:56:52.359Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/dprintprice:testIamPermissions [none]
+[debug] [2024-03-11T13:56:52.359Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/dprintprice:testIamPermissions x-goog-quota-user=projects/dprintprice
+[debug] [2024-03-11T13:56:52.360Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/dprintprice:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update","firebaserules.releases.create","firebaserules.releases.update","firebaserules.rulesets.create"]}
+[debug] [2024-03-11T13:56:53.242Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/dprintprice:testIamPermissions 200
+[debug] [2024-03-11T13:56:53.243Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/dprintprice:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update","firebaserules.releases.create","firebaserules.releases.update","firebaserules.rulesets.create"]}
+[debug] [2024-03-11T13:56:53.244Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/dprintprice [none]
+[debug] [2024-03-11T13:56:53.852Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/dprintprice 200
+[debug] [2024-03-11T13:56:53.852Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/dprintprice {"projectId":"dprintprice","projectNumber":"54492454428","displayName":"3DPrintPrice","name":"projects/dprintprice","resources":{"hostingSite":"dprintprice","storageBucket":"dprintprice.appspot.com","locationId":"us-east1"},"state":"ACTIVE","etag":"1_e8752dea-c8c1-41f0-b658-8daca62342c0"}
+[info] 
+[info] === Deploying to 'dprintprice'...
+[info] 
+[info] i  deploying storage, hosting 
+[info] i  storage: ensuring required API firebasestorage.googleapis.com is enabled... 
+[debug] [2024-03-11T13:56:53.858Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/dprintprice/services/firebasestorage.googleapis.com [none]
+[debug] [2024-03-11T13:56:53.858Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/dprintprice/services/firebasestorage.googleapis.com x-goog-quota-user=projects/dprintprice
+[debug] [2024-03-11T13:56:54.906Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/dprintprice/services/firebasestorage.googleapis.com 200
+[debug] [2024-03-11T13:56:54.906Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/dprintprice/services/firebasestorage.googleapis.com [omitted]
+[info] ✔  storage: required API firebasestorage.googleapis.com is enabled 
+[debug] [2024-03-11T13:56:54.908Z] >>> [apiv2][query] GET https://firebasestorage.googleapis.com/v1alpha/projects/dprintprice/defaultBucket [none]
+[debug] [2024-03-11T13:56:55.668Z] <<< [apiv2][status] GET https://firebasestorage.googleapis.com/v1alpha/projects/dprintprice/defaultBucket 200
+[debug] [2024-03-11T13:56:55.668Z] <<< [apiv2][body] GET https://firebasestorage.googleapis.com/v1alpha/projects/dprintprice/defaultBucket {"name":"projects/dprintprice/defaultBucket","location":"US-EAST1","bucket":{"name":"projects/dprintprice/buckets/dprintprice.appspot.com"}}
+[info] i  firebase.storage: checking storage.rules for compilation errors... 
+[debug] [2024-03-11T13:56:55.671Z] >>> [apiv2][query] POST https://firebaserules.googleapis.com/v1/projects/dprintprice:test [none]
+[debug] [2024-03-11T13:56:55.671Z] >>> [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/dprintprice:test [omitted]
+[debug] [2024-03-11T13:56:56.534Z] <<< [apiv2][status] POST https://firebaserules.googleapis.com/v1/projects/dprintprice:test 200
+[debug] [2024-03-11T13:56:56.535Z] <<< [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/dprintprice:test {}
+[info] ✔  firebase.storage: rules file storage.rules compiled successfully 
+[debug] [2024-03-11T13:56:56.540Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/dprintprice/versions [none]
+[debug] [2024-03-11T13:56:56.540Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/dprintprice/versions {"status":"CREATED","labels":{"deployment-tool":"cli-firebase"}}
+[debug] [2024-03-11T13:56:58.040Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/dprintprice/versions 200
+[debug] [2024-03-11T13:56:58.040Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/dprintprice/versions {"name":"projects/54492454428/sites/dprintprice/versions/9e4502b282c7c2d3","status":"CREATED","config":{},"labels":{"deployment-tool":"cli-firebase"}}
+[debug] [2024-03-11T13:56:58.043Z] >>> [apiv2][query] GET https://firebaserules.googleapis.com/v1/projects/dprintprice/releases pageSize=10&pageToken=
+[debug] [2024-03-11T13:56:58.739Z] <<< [apiv2][status] GET https://firebaserules.googleapis.com/v1/projects/dprintprice/releases 200
+[debug] [2024-03-11T13:56:58.739Z] <<< [apiv2][body] GET https://firebaserules.googleapis.com/v1/projects/dprintprice/releases {"releases":[{"name":"projects/dprintprice/releases/firebase.storage/dprintprice.appspot.com","rulesetName":"projects/dprintprice/rulesets/d982f81a-9a95-41a8-9bbf-b1b5d0b0bd1d","createTime":"2024-03-08T13:59:07.386786Z","updateTime":"2024-03-11T10:07:00.060869Z"}]}
+[debug] [2024-03-11T13:56:58.740Z] >>> [apiv2][query] GET https://firebaserules.googleapis.com/v1/projects/dprintprice/rulesets/d982f81a-9a95-41a8-9bbf-b1b5d0b0bd1d [none]

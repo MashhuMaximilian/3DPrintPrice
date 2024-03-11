@@ -26,13 +26,18 @@ const store = useStore();
 const container = ref(null);
 const canvas = ref(null);
 
+
+
 // const sphereProperties = computed(() => store.state.sphereProperties);
 
 
 let scene, camera, renderer;
 
-onMounted(() => {
+onMounted( () => {
   
+ 
+
+
   if (!container.value || !canvas.value) return;
 
   scene = useScene();
@@ -69,18 +74,24 @@ const { loadSkybox, loadFloor, setHDREnvironment, toggleAssetVisibility } = useE
 
 
 
-
-
-// Then, inside your setup function or script
-
-// Ensure the scene update functions are correctly called within watchers
-watch(() => store.state.selectedSkybox, (newSkybox) => {
-  if (newSkybox) {
-    console.log('Loading skybox with filename:', newSkybox);
-    loadSkybox(newSkybox); // Assumed that 'loadSkybox' expects a string filename
-    toggleBackgroundSphereVisibility(scene, false); // Adjust this call if necessary
+watch(() => store.state.selectedSkybox, async (newSkybox) => {
+  if (newSkybox === 'No Skybox') {
+    // Remove existing skybox
+    await loadSkybox('No Skybox');
+    toggleBackgroundSphereVisibility(scene, true); // Show the background sphere
+  } else {
+    try {
+      await loadSkybox(newSkybox);
+      toggleBackgroundSphereVisibility(scene, false); // Hide the background sphere
+    } catch (error) {
+      console.error('Error loading skybox:', error);
+      // Handle the error, e.g., show an error message to the user
+    }
   }
-}, { immediate: true });
+});
+
+
+
 
 watch(() => store.state.selectedFloor, (newFloor) => {
   if (newFloor) {

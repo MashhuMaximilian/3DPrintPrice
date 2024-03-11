@@ -6,9 +6,9 @@
 <div class="flex flex-row justify-content-evenly">
 
   <div  class="text-center flex flex-column w-3 justify-content-left justify-content-between py-4">
-    <Dropdown class="flex flex-row p-2 border-round-xl" v-model="selectedSkybox" :options="skyboxOptions" placeholder="Select a Skybox" @change="updateEnvironmentProperty('Skybox', $event)" />
-  <Dropdown class="flex flex-row p-2 border-round-xl"  v-model="selectedFloor" :options="floorOptions" placeholder="Select a Floor" @change="updateEnvironmentProperty('Floor', $event)" />
-  <Dropdown class="flex flex-row p-2 border-round-xl" v-model="selectedHDR" :options="hdrOptions" placeholder="Select an HDR" @change="updateEnvironmentProperty('HDR', $event)" />
+    <Dropdown class="flex flex-row p-2 border-round-xl" v-model="selectedSkybox" :options="skyboxOptions" placeholder="Choose Skybox" @change="updateEnvironmentProperty('Skybox', $event)" />
+  <Dropdown class="flex flex-row p-2 border-round-xl"  v-model="selectedFloor" :options="floorOptions" placeholder="Choose Floor" @change="updateEnvironmentProperty('Floor', $event)" />
+  <Dropdown class="flex flex-row p-2 border-round-xl" v-model="selectedHDR" :options="hdrOptions" placeholder="Choose HDR" @change="updateEnvironmentProperty('HDR', $event)" />
 
   </div>
 
@@ -30,10 +30,6 @@
                 <Slider class="w-full p-2 border-round-md" v-model="emissiveIntensity" :min="0" :max="1" :step="0.01" @change="updateSphereProperty('emissiveIntensity', emissiveIntensity)" />
             </div>
 
-            <div class="text-right flex flex-row justify-content-left" >
-              <span class="w-6  mr-4 font-medium">Effect on Objects</span>
-              <Slider class="w-full p-2 border-round-md" v-model="envMapIntensity" :min="0" :max="1" :step="0.01" @change="updateSphereProperty('envMapIntensity', emissiveIntensity)" />
-          </div>
 
           <div class="text-right flex flex-row justify-content-left" >
                 <span class="w-6 mr-4 font-medium">Opacity</span>
@@ -108,8 +104,8 @@ import InputIcon from 'primevue/inputicon';
 
 
 const store = useStore();
-const { getAssetNames } = useEnvironmentLoader(/* scene, renderer */); // Pass your scene and renderer
-
+const {  skyboxes, floors, hdrs  } = useEnvironmentLoader(/* scene, renderer */); // Pass your scene and renderer
+// const { skyboxes, floors, hdrs } = useEnvironmentLoader(/* scene, renderer */); // Pass your scene and renderer
 
 
 const selectedSkybox = computed({
@@ -145,11 +141,9 @@ const selectedHDR = computed({
   },
   set: (value) => {
     console.log('Setting selectedHDR:', value);
-    console.log('Dispatching updateHDR:', value === 'No HDR' ? null : value);
-    store.dispatch('updateHDR', value === 'No HDR' ? null : value);
+    store.dispatch('updateHDR', value);
   }
 });
-
 
 const sphereColor = ref('#8c32ff');
 const emissiveColor = ref('#ffffff');
@@ -159,7 +153,6 @@ const emissiveColor = ref('#ffffff');
 const metalness = ref(0.7);
 const roughness = ref(0.4);
 const emissiveIntensity = ref(0.01);
-const envMapIntensity = ref(0.5);
 const opacity = ref(0.9);
 
 const floorColor = ref('#8c52ff');
@@ -194,14 +187,11 @@ const updateFloorColor = (colorInput) => {
 
 
 // Computed properties for dropdown options
-const skyboxOptions = computed(() => getAssetNames('skybox'));
-const floorOptions = computed(() => ['No Floor', ...getAssetNames('floor')]);
-const hdrOptions = computed(() => ['No HDR', ...getAssetNames('hdr')]);
+const skyboxOptions = computed(() => ['No Skybox', ...skyboxes.value]);
+const floorOptions = computed(() => ['No Floor', ...floors.value]);
+const hdrOptions = computed(() => ['No HDR', ...hdrs.value]);
 
 // Define update functions that dispatch actions to the store
-
-
-
 
 
 </script>

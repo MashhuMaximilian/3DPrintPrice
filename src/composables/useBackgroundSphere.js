@@ -25,7 +25,6 @@ export function useBackgroundSphere() {
         roughness: properties.roughness,
         emissive: emissiveColor, // Set emissive color
         emissiveIntensity: properties.emissiveIntensity,
-        envMapIntensity: properties.envMapIntensity,
         side: THREE.BackSide,
         transparent: true,
         opacity: properties.opacity,
@@ -46,7 +45,6 @@ export function useBackgroundSphere() {
       sphere.material.metalness = properties.metalness;
       sphere.material.roughness = properties.roughness;
       sphere.material.emissiveIntensity = properties.emissiveIntensity;
-      sphere.material.envMapIntensity = properties.envMapIntensity;
       sphere.material.opacity = properties.opacity;
       sphere.material.alphaTest = properties.alphaTest;
 

@@ -4,28 +4,16 @@ import 'primeflex/primeflex.css';
 
 import App from './App.vue';
 import PrimeVue from 'primevue/config';
-//main.js
 import { createApp } from 'vue';
-import firebaseApp from '../firebaseStorage';
+import firebaseApp from '../firebaseStorage'; // Adjust the path as needed
 import router from './router';
-import store from './store'; // Import the store from the file you defined it in
+import store from './store';
 
-console.log(firebaseApp); // If you want to ensure it's imported correctly
-
-
+console.log(firebaseApp); // This line is just to verify that Firebase app is imported and initialized
 
 const app = createApp(App);
-app.use(PrimeVue, { unstyled: false });
-app.use(PrimeVue, { ripple: true });
-
-app.use(store); // Inject the store into the Vue application
+app.use(PrimeVue, { unstyled: false, ripple: true });
+app.use(store);
 app.use(router);
-
-// Change the theme
-
-
-
-// Globally register all PrimeVue components
-// (Note: You may need to import components explicitly if using Vue 3)
 
 app.mount('#app');
