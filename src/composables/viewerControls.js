@@ -16,10 +16,10 @@ export function useViewerControls(camera, renderer) {
   // Update controls on each frame
 
    // Add an event listener to the controls to log the camera position on interaction
-   controls.addEventListener('change', () => {
-    console.log('Camera Position:', camera.position);
-    console.log('Camera LookAt:', controls.target);
-  });
+  //  controls.addEventListener('change', () => {
+  //   console.log('Camera Position:', camera.position);
+  //   console.log('Camera LookAt:', controls.target);
+  // });
 
 
   return { controls, update: () => controls.update() };

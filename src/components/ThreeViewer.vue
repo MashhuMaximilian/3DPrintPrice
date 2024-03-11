@@ -127,7 +127,8 @@ const { loadPrinter } = usePrinterLoader(scene);
     const printerType = 'resinprinters';
     const printerName = 'CrealityLD002H';
     const printerFileName = 'LD002H';
-    const textureName = 'Gltf_Import';
+    const textureName = 'Gltf_Import'
+
 
     try {
       loadPrinter(printerType, printerName, printerFileName, textureName);
@@ -135,6 +136,8 @@ const { loadPrinter } = usePrinterLoader(scene);
       console.error('Error loading printer model:', error);
       // Handle the error appropriately (e.g., display an error message to the user)
     }
+
+    
 
 
   const geometry = new THREE.BoxGeometry();

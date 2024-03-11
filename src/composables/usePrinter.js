@@ -27,7 +27,7 @@ export function usePrinterLoader(scene) {
     const basePath = `assets/printers/${printerType}/${printerName}`;
     const modelURL = await fetchAssetURL(`${basePath}/${printerFileName}.gltf`);
     const binURL = await fetchAssetURL(`${basePath}/${printerFileName}.bin`); // Assuming bin file has the same name
-    const textureURL = await fetchAssetURL(`${basePath}/textures/${textureName}.png`); // Replace with actual texture file name if different
+    const textureURL = await fetchAssetURL(`${basePath}/textures/${textureName}.jpg`); // Replace with actual texture file name if different
 
     
 
@@ -60,7 +60,9 @@ export function usePrinterLoader(scene) {
       
               // Set new emissiveness (example: a slightly tinted white emissive)
               child.material.map = texture;
+              child.material.color.multiplyScalar(2.2); // Multiplies base color by a factor (adjust carefully)
               child.material.needsUpdate = true;
+             
             }
           });
         }, undefined, error => {
