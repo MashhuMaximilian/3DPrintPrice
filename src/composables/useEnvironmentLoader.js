@@ -101,7 +101,6 @@ async function loadFloor(filename, color) {
   }
 
   // Continue with loading the floor if a valid filename is provided
-  console.log(`Loading floor: ${filename} with color ${color}`);
   const floorPath = `assets/floors/${filename}`; // Ensure your filenames include the .glb extension
   const floorURL = await fetchAssetURL(floorPath);
 
@@ -118,7 +117,6 @@ async function loadFloor(filename, color) {
     if (color) {
       gltf.scene.traverse((child) => {
         if (child.isMesh && child.material) {
-          console.log(`Applying color ${color} to mesh`);
           child.material.color.set(color); // Change the material color
         }
       });
@@ -131,7 +129,9 @@ async function loadFloor(filename, color) {
   });
 }
 
-async function setHDREnvironment(filename) {
+async function setHDREnvironment(filename, hdrIntensity) {
+  console.log('setHDREnvironment', { filename, hdrIntensity });
+
   // When "No HDR" is selected, clear the environment and return early
   if (filename === 'No HDR' || !filename) {
     console.log('No HDR is selected, clearing the HDR environment.');
@@ -146,14 +146,20 @@ async function setHDREnvironment(filename) {
   const loader = new RGBELoader();
   loader.load(hdrURL, (texture) => {
     const pmremGenerator = new THREE.PMREMGenerator(renderer);
-    scene.environment = pmremGenerator.fromEquirectangular(texture).texture;
+    const envMap = pmremGenerator.fromEquirectangular(texture).texture;
+
+    // Apply the HDR intensity
+    envMap.intensity = hdrIntensity;
+
+    scene.environment = envMap;
+    console.log('New HDR Intensity applied:', scene.environment.intensity);
+
+
     pmremGenerator.dispose();
   }, null, (error) => {
     console.error('An error occurred while loading the HDR environment:', error);
   });
 }
-
-
   function removeAsset(type) {
     switch(type) {
       case 'floor':

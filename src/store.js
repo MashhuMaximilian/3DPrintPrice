@@ -3,6 +3,7 @@ import { createStore } from 'vuex';
 
 const store = createStore({
   state: {
+    hdrIntensity: 1, 
     selectedSkybox: 'lightbluesky.glb',
     selectedFloor: 'pinkfloor2.glb',
     selectedHDR:'spot1Lux.hdr',
@@ -31,7 +32,11 @@ const store = createStore({
     updateHDR(state, value) {
       state.selectedHDR = value;
     },
-  
+
+    setHDRIntensity(state, value) {
+      console.log('Mutation: setHDRIntensity', value);
+      state.hdrIntensity = value;
+    },
 
     updateSphereProperty(state, { property, value }) {
       if (property in state.sphereProperties) {
@@ -69,10 +74,15 @@ const store = createStore({
     },
     
     updateHDR({ commit }, value) {
-      commit('updateHDR', value );
+      commit('updateHDR', value === 'No HDR' ? null : value);
     },
 
-    // updateSphereColor({ commit }, color) { commit('updateSphereColor', color); },
+    updateHDRIntensity({ commit }, value) {
+      console.log('Action: updateHDRIntensity', value);
+
+      commit('setHDRIntensity', value);
+    },
+  
 
 
   }

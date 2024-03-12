@@ -66,7 +66,6 @@ const { loadSkybox, loadFloor, setHDREnvironment, toggleAssetVisibility } = useE
 
   watch(() => store.state.sphereProperties, (newProperties) => {
   setBackgroundSphere(scene, newProperties);
-  console.log("Sphere properties being used:", newProperties);
   toggleBackgroundSphereVisibility(scene, true); // Adjust visibility as needed
 }, { deep: true });
 
@@ -95,7 +94,6 @@ watch(() => store.state.selectedSkybox, async (newSkybox) => {
 
 watch(() => store.state.selectedFloor, (newFloor) => {
   if (newFloor) {
-    console.log('Loading floor with filename:', newFloor);
     loadFloor(newFloor, store.state.floorProperties.floorColor); // Ensure loadFloor expects a string filename and a color
   } else {
     toggleAssetVisibility('floor', false); // This hides the floor if 'newFloor' is null or undefined
@@ -103,23 +101,35 @@ watch(() => store.state.selectedFloor, (newFloor) => {
 }, { immediate: true });
 
 
+watch(() => store.state.hdrIntensity, (newIntensity, oldIntensity) => {
+  console.log('HDR Intensity changed from', oldIntensity, 'to', newIntensity);
+  if (scene.environment) {
+    scene.environment.intensity = newIntensity;
+  }
+});
+
+
 watch(() => store.state.selectedHDR, (newHDR) => {
   if (newHDR) {
-    console.log('Setting HDR environment with filename:', newHDR);
-    setHDREnvironment(newHDR); // Assumes 'setHDREnvironment' expects a string filename or null
+  
+    setHDREnvironment(newHDR);
   } else {
-    setHDREnvironment(null); // Clear the HDR environment if 'newHDR' is null or undefined
+    setHDREnvironment(null);
   }
 }, { immediate: true });
+
+// watch(() => store.state.hdrIntensity, (newIntensity) => {
+//   if (scene.environment) {
+//     scene.environment.intensity = newIntensity;
+//   }
+// });
 
 // Similar adjustments for any other properties you're watching from the Vuex store
 
 
 watch(() => store.state.floorProperties.floorColor, (newColor) => {
   const filename = store.state.selectedFloor; // Ensure this is correctly accessing the selected floor's filename
-  console.log(`Watcher: Floor color changed to ${newColor}`);
   if (filename) {
-    console.log(`Loading floor with filename: ${filename} and color: ${newColor}`);
     loadFloor(filename, `#${newColor}`); // Assuming loadFloor function takes the filename and hex color code
   } else {
     console.error("Filename is not defined.");
