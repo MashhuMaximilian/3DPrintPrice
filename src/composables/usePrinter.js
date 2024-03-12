@@ -60,7 +60,7 @@ export function usePrinterLoader(scene) {
       
               // Set new emissiveness (example: a slightly tinted white emissive)
               child.material.map = texture;
-              child.material.color.multiplyScalar(2.2); // Multiplies base color by a factor (adjust carefully)
+              child.material.color.multiplyScalar(1.8); // Multiplies base color by a factor (adjust carefully)
               child.material.needsUpdate = true;
              
             }

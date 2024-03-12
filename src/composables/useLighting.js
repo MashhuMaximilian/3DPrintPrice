@@ -10,7 +10,7 @@ export function useLighting(scene) {
 
   // Fill Light (Soft light)
   const fillLight = new THREE.DirectionalLight(0xdddddd, 1.7);
-  fillLight.position.set(5, 5, 30); // Adjust position
+  fillLight.position.set(50, 50, 30); // Adjust position
 
   // Rim Light (Subtle highlight)
   const rimLight = new THREE.SpotLight(0xffffff, 0.3, 0, Math.PI / 4, 1);

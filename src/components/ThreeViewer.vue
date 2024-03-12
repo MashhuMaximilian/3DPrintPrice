@@ -57,7 +57,7 @@ const   { update: updateControls } = useViewerControls(camera, renderer);
   
 const { setBackgroundSphere, toggleBackgroundSphereVisibility } = useBackgroundSphere(scene.value);
 // Correct usage of useEnvironmentLoader, ensure loadHDR is included
-const { loadSkybox, loadFloor, setHDREnvironment, toggleAssetVisibility } = useEnvironmentLoader(scene, renderer);
+const { loadSkybox, loadFloor, setHDREnvironment, toggleAssetVisibility, updateMaterialEnvMapIntensity } = useEnvironmentLoader(scene, renderer);
 
 
 
@@ -101,20 +101,24 @@ watch(() => store.state.selectedFloor, (newFloor) => {
 }, { immediate: true });
 
 
-watch(() => store.state.hdrIntensity, (newIntensity, oldIntensity) => {
-  console.log('HDR Intensity changed from', oldIntensity, 'to', newIntensity);
-  if (scene.environment) {
-    scene.environment.intensity = newIntensity;
+watch(() => store.state.hdrIntensity, (newIntensity) => {
+  console.log('HDR Intensity changed. Updating environment and material intensities:', newIntensity);
+  const currentHDR = store.state.selectedHDR;
+  if (currentHDR) {
+    setHDREnvironment(currentHDR, newIntensity);
+    // Update the material intensities as well
+    updateMaterialEnvMapIntensity(scene, newIntensity);
   }
-});
+}, { immediate: true });
 
 
 watch(() => store.state.selectedHDR, (newHDR) => {
   if (newHDR) {
   
-    setHDREnvironment(newHDR);
+    setHDREnvironment(newHDR, 3);
+    store.dispatch('updateHDRIntensity', 3);
   } else {
-    setHDREnvironment(null);
+    setHDREnvironment(null, 0);
   }
 }, { immediate: true });
 

@@ -3,10 +3,10 @@ import { createStore } from 'vuex';
 
 const store = createStore({
   state: {
-    hdrIntensity: 1, 
+    hdrIntensity: 3, 
     selectedSkybox: 'lightbluesky.glb',
-    selectedFloor: 'pinkfloor2.glb',
-    selectedHDR:'spot1Lux.hdr',
+    selectedFloor: 'seamless__floor_tiled_texture_v.glb',
+    selectedHDR:'moonlessgolf.hdr',
 
 
     floorProperties: {

@@ -33,7 +33,7 @@
         </div>
 
         <div class="text-right flex flex-row justify-content-left" >
-            <span class="w-6  mr-4 font-medium">Sky Glow Intensity</span>
+            <span class="w-6  mr-4 font-medium">Sky Glow</span>
             <Slider class="w-full p-2 border-round-md" v-model="emissiveIntensity" :min="0" :max="1" :step="0.01" @change="updateSphereProperty('emissiveIntensity', emissiveIntensity)" />
         </div>
 
@@ -45,7 +45,7 @@
 
         <div class="text-right flex flex-row justify-content-left" >
             <span class="w-6 mr-4 font-medium">HDR Intensity</span>
-            <Slider class="w-full p-2 border-round-md" v-model="hdrIntensity" :min="0" :max="1" :step="0.1" @change="updateHDRIntensity" />
+            <Slider class="w-full p-2 border-round-md" v-model="hdrIntensity" :min="0" :max="6" :step="0.1" @change="updateHDRIntensity" />
                   </div>
 
 </div>
@@ -147,7 +147,7 @@ const hdrIntensity = computed({
       // Getter returns the current state value
       get: () => store.state.hdrIntensity,
       // Setter dispatches an action to update the state
-      set: (value) => store.dispatch('updateHDRIntensity', parseFloat(value))
+      set: (value) => store.dispatch('updateHDRIntensity', value)
     });
 
 const {  skyboxes, floors, hdrs  } = useEnvironmentLoader(/* scene, renderer */); // Pass your scene and renderer

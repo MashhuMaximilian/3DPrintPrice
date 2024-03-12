@@ -129,6 +129,17 @@ async function loadFloor(filename, color) {
   });
 }
 
+function updateMaterialEnvMapIntensity(scene, intensity) {
+  scene.traverse((object) => {
+    if (object.material && object.material.isMaterial) {
+      if ('envMapIntensity' in object.material) {
+        object.material.envMapIntensity = intensity;
+        object.material.needsUpdate = true; // Ensure the material is updated
+      }
+    }
+  });
+}
+
 async function setHDREnvironment(filename, hdrIntensity) {
   console.log('setHDREnvironment', { filename, hdrIntensity });
 
@@ -153,13 +164,16 @@ async function setHDREnvironment(filename, hdrIntensity) {
 
     scene.environment = envMap;
     console.log('New HDR Intensity applied:', scene.environment.intensity);
-
+    updateMaterialEnvMapIntensity(scene, hdrIntensity);
 
     pmremGenerator.dispose();
   }, null, (error) => {
     console.error('An error occurred while loading the HDR environment:', error);
   });
 }
+
+
+
   function removeAsset(type) {
     switch(type) {
       case 'floor':
@@ -205,6 +219,7 @@ return {
   removeAsset,
   toggleAssetVisibility,
   fetchAssetNames,
+  updateMaterialEnvMapIntensity,
   skyboxes,
   floors,
   hdrs
