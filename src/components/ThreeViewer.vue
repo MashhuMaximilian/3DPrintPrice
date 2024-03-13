@@ -16,6 +16,8 @@ import { useLighting} from '../composables/useLighting'
 import { useBackgroundSphere} from '../composables/useBackgroundSphere'
 import { useEnvironmentLoader} from '../composables/useEnvironmentLoader'
 import { useViewerControls } from '../composables/viewerControls';
+import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
+
 
 import { usePrinterLoader } from '@/composables/usePrinter';
 // import { useSTLfile } from '@/composables/useSTLfile.js';
@@ -46,6 +48,7 @@ onMounted( () => {
   if (!container.value || !canvas.value) return;
 
   scene = useScene();
+  store.commit('setScene', scene); // Commit the scene to the Vuex store
   camera = useCamera(container.value.clientWidth / container.value.clientHeight);
   renderer = useRenderer(canvas.value);
   renderer.setSize(container.value.clientWidth, container.value.clientHeight);
@@ -65,8 +68,63 @@ const { setBackgroundSphere, toggleBackgroundSphereVisibility } = useBackgroundS
 const { loadSkybox, loadFloor, setHDREnvironment, toggleAssetVisibility, updateMaterialEnvMapIntensity } = useEnvironmentLoader(scene, renderer);
 
 
+let currentMesh = null;
 
+watch(() => store.state.currentSTLFile, async (newFile) => {
+  if (newFile) {
+    const loader = new STLLoader();
+    const reader = new FileReader();
 
+    reader.onload = async (event) => {
+      const contents = event.target.result;
+      const geometry = loader.parse(contents);
+      const material = new THREE.MeshStandardMaterial();
+      const mesh = new THREE.Mesh(geometry, material);
+
+      store.commit('setCurrentSTLFileName', newFile.name);
+
+      // Remove the previous STL mesh from the scene
+      if (currentMesh) {
+        scene.remove(currentMesh);
+      }
+
+      // Calculate the bounding box of the mesh
+      const box = new THREE.Box3().setFromObject(mesh);
+      const size = new THREE.Vector3();
+      box.getSize(size);
+
+      // Calculate the height of the STL model
+      const height = size.y;
+      console.log('STL model height:', height);
+
+      // Store the height in the Vuex store for pricing calculations
+      store.dispatch('updateSTLHeight', height);
+
+      // Scale the mesh to a desired size
+      const desiredSize = 8; // Adjust this value as needed
+      const scaleFactor = desiredSize / Math.max(size.x, size.y, size.z);
+      mesh.scale.set(scaleFactor, scaleFactor, scaleFactor);
+
+      // Set the position and orientation of the mesh
+      const targetPosition = new THREE.Vector3(0, 25, 10); // Adjust the coordinates as needed
+      mesh.position.copy(targetPosition);
+      mesh.rotation.x = Math.PI/2; // Rotate the mesh upside down
+
+      // Add the new STL mesh to the scene
+      scene.add(mesh);
+      currentMesh = mesh;
+    };
+
+    reader.readAsArrayBuffer(newFile);
+  } else {
+    // Remove the current STL mesh from the scene if newFile is null or undefined
+    if (currentMesh) {
+      scene.remove(currentMesh);
+      currentMesh = null;
+      store.commit('setCurrentSTLFileName', null);
+    }
+  }
+}, { immediate: true });
 
 
   watch(() => store.state.sphereProperties, (newProperties) => {
@@ -74,13 +132,6 @@ const { loadSkybox, loadFloor, setHDREnvironment, toggleAssetVisibility, updateM
   toggleBackgroundSphereVisibility(scene, true); // Adjust visibility as needed
 }, { deep: true });
 
-
-// watchEffect(() => {
-//   const file = store.state.currentSTLFile;
-//   if (file) {
-//     loadSTLModel(file);
-//   }
-// });
 
 
 watch(() => store.state.selectedSkybox, async (newSkybox) => {
@@ -172,23 +223,12 @@ const { loadPrinter } = usePrinterLoader(scene);
       // Handle the error appropriately (e.g., display an error message to the user)
     }
 
-    
-
-
-  const geometry = new THREE.BoxGeometry();
-  const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-  const cube = new THREE.Mesh(geometry, material);
-  scene.add(cube);
-
 
   // Enable shadow casting for the renderer
 
   function animate() {
     requestAnimationFrame(animate);
     updateControls(); // Update the viewer controls each frame
-
-    cube.rotation.x += 0.01;
-    cube.rotation.y += 0.01;
     renderer.render(scene, camera);
 
 

@@ -7,7 +7,11 @@ const store = createStore({
     selectedSkybox: 'lightbluesky.glb',
     selectedFloor: 'seamless__floor_tiled_texture_v.glb',
     selectedHDR:'moonlessgolf.hdr',
+
     currentSTLFile: null,
+    currentSTLFileName: null,
+
+    
 
 
     floorProperties: {
@@ -24,10 +28,6 @@ const store = createStore({
     },
   },
   mutations: {
-
-    setCurrentSTLFile(state, file) {
-      state.currentSTLFile = file;
-    },
   
     updateSkybox(state, value) {
       state.selectedSkybox = value;
@@ -52,16 +52,34 @@ const store = createStore({
     updateFloorColor(state, color) {
       state.floorProperties.floorColor = color;
     },
+
+    setCurrentSTLFile(state, file) {
+      state.currentSTLFile = file;
+    },
+
+    setCurrentSTLFileName(state, fileName) {
+      state.currentSTLFileName = fileName;
+    },
   
+    clearCurrentSTLFile(state) {
+      if (state.currentSTLFile) {
+        state.scene.remove(state.currentSTLFile);
+        state.currentSTLFile = null;
+      }
+    }
   
   
   },
   actions: {
   
-    uploadSTLFile({ commit }, file) {
+    updateCurrentSTLFile({ commit }, file) {
       commit('setCurrentSTLFile', file);
     },
-
+    removeCurrentMesh({ commit }) {
+      commit('setCurrentSTLFile', null);
+      commit('setCurrentSTLFileName', null);
+    },
+    
     updateSphereColor({ commit }, { property, value }) {
       commit('updateSphereProperty', { property, value });
     },

@@ -39,14 +39,18 @@
                 <div v-if="uploadedFiles.length > 0">
                     <h5>Completed</h5>
                     <div class="flex flex-wrap p-0 border-round-3xl sm:p-5 gap-5">
-                        <div v-for="(file, index) of uploadedFiles" :key="file.name + file.type + file.size" class="card m-0 px-6 flex flex-column border-1 surface-border align-items-center gap-3">
+                        <div v-for="(file, index) of uploadedFiles" :key="file.name + file.type + file.size" class="card flex flex-row border-1 border-round-3xl p-2 surface-border align-items-left gap-2">
                             <div>
-                                <img role="presentation" :alt="file.name" :src="file.objectURL" width="100" height="50" />
+                                <img role="presentation" class="border-round-3xl h-9rem w-auto w-full" :alt="file.name" :src="file.previewURL" />
                             </div>
+                            <div class="flex flex-column gap-2 p-2">
                             <span class="font-semibold">{{ file.name }}</span>
                             <div>{{ formatSize(file.size) }}</div>
                             <Badge value="Completed" class="mt-3" severity="success" />
-                            <Button icon="pi pi-times" @click="removeUploadedFileCallback(index)" outlined rounded  severity="danger" />
+                            <div class="w-12 justify-content-evenly">
+                            <Button icon="pi pi-times" @click="removeUploadedFileCallback(index)" outlined rounded  severity="danger" ></Button>
+                        </div>
+                        </div>
                         </div>
                     </div>
                 </div>
@@ -74,6 +78,11 @@ import Badge from 'primevue/badge';
 
 import * as THREE from 'three';
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader';
+
+import { useStore } from 'vuex';
+const store = useStore();
+
+
 
 
 const generateSTLPreview = (file) => {
@@ -153,14 +162,19 @@ const files = ref([]);
 const maxFileSize = 100 * 1024 * 1024;
 
 const onRemoveTemplatingFile = (file, removeFileCallback, index) => {
-    console.log(`Removing file: ${file.name}, size: ${file.size}`);
-    totalSize.value -= file.size;
-    if (totalSize.value < 0) {
-        totalSize.value = 0;
-    }
-    totalSizePercent.value = (totalSize.value / maxFileSize) * 100;
-    console.log(`File removed: ${file.name}, updated total size: ${totalSize.value}, percentage: ${totalSizePercent.value}`);
-    removeFileCallback(index);
+  console.log(`Removing file: ${file.name}, size: ${file.size}`);
+  totalSize.value -= file.size;
+  if (totalSize.value < 0) {
+    totalSize.value = 0;
+  }
+  totalSizePercent.value = (totalSize.value / maxFileSize) * 100;
+  console.log(`File removed: ${file.name}, updated total size: ${totalSize.value}, percentage: ${totalSizePercent.value}`);
+  removeFileCallback(index);
+
+ if (file.name === store.state.currentSTLFileName) {
+    store.dispatch('removeCurrentMesh');
+  }
+  // Dispatch the removeCurrentMesh action to remove the mesh from the scene
 };
 
 const onSelectedFiles = async (event) => {
@@ -193,30 +207,34 @@ const onSelectedFiles = async (event) => {
 
 
 
-const uploadEvent = (callback) => {
+// Inside the uploadEvent function
+const uploadEvent = async (callback) => {
     console.log(`Attempting to upload, total size: ${totalSize.value}, percentage: ${totalSizePercent.value}`);
-    totalSizePercent.value = (totalSize.value / maxFileSize) * 100;
     if (callback && typeof callback === "function") {
-        callback();
+        await callback();
+        // Iterate over files.value array and dispatch action for each file
+        files.value.forEach(file => {
+            store.dispatch('updateCurrentSTLFile', file);
+        });
     } else {
         console.error("Upload callback is not a function", callback);
-        // Handle the case where no callback is provided or it's not a function
     }
 };
+
+
 
 const onTemplatedUpload = () => {
     toast.add({ severity: "info", summary: "Success", detail: "File Uploaded", life: 3000 });
 };
 
 const resetUploadState = (clearCallback) => {
-    // Invoke the clearCallback to clear the files
-    if (typeof clearCallback === 'function') {
-        clearCallback();
-    }
-    // Reset the progress-related state variables
-    totalSize.value = 0;
-    totalSizePercent.value = 0;
-    // Optionally, you might want to clear any other relevant state or UI elements here
+  if (typeof clearCallback === 'function') {
+    clearCallback();
+  }
+  totalSize.value = 0;
+  totalSizePercent.value = 0;
+  // Dispatch an action to clear the current mesh
+  store.dispatch('removeCurrentMesh');
 };
 
 const formatSize = (bytes) => {

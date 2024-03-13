@@ -1,9 +1,9 @@
-// useSTLfile.js
-import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import * as THREE from 'three';
 
-export function useSTLfile(scene) {
+// useSTLfile.js
+import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
+
+export function useSTLfile(store) {
   function loadSTLModel(file) {
     if (!(file instanceof Blob)) {
       console.error('Invalid file type:', file);
@@ -26,18 +26,30 @@ export function useSTLfile(scene) {
       console.log('Geometry parsed successfully');
       const material = new THREE.MeshStandardMaterial();
       const mesh = new THREE.Mesh(geometry, material);
-      mesh.scale.set(0.1, 0.1, 0.1);
-      mesh.rotation.z = Math.PI;
-      mesh.rotation.x = Math.PI / 2;
 
-      const gltfLoader = new GLTFLoader();
-      gltfLoader.load('/assets/resinprinter/scene.gltf', (gltf) => {
-        const gltfBox = new THREE.Box3().setFromObject(gltf.scene);
-        const gltfCenter = gltfBox.getCenter(new THREE.Vector3());
+      // Calculate the bounding box of the mesh
+      const box = new THREE.Box3().setFromObject(mesh);
+      const size = new THREE.Vector3();
+      box.getSize(size);
 
-        mesh.position.set(gltfCenter.x - 1, gltfCenter.y + 18.5, gltfCenter.z + 11);
-        scene.add(mesh);
-      });
+      // Calculate the height of the STL model
+      const height = size.y;
+      console.log('STL model height:', height);
+
+      // Store the height in the Vuex store for pricing calculations
+      store.dispatch('updateSTLHeight', height);
+
+      // Scale the mesh to a desired size
+      const desiredSize = 1; // Adjust this value as needed
+      const scaleFactor = desiredSize / Math.max(size.x, size.y, size.z);
+      mesh.scale.set(scaleFactor, scaleFactor, scaleFactor);
+
+      // Set the position and orientation of the mesh
+      const targetPosition = new THREE.Vector3(0, 10, 0); // Adjust the coordinates as needed
+      mesh.position.copy(targetPosition);
+      mesh.rotation.x = Math.PI; // Rotate the mesh upside down
+
+      store.dispatch('updateCurrentSTLFile', mesh);
     };
 
     fileReader.onerror = (error) => {
