@@ -1,4 +1,4 @@
-
+<!-- FileUpload  -->
 <template>
     <div class="card shadow-5 w-12 h-full p-4 border-round-3xl vertical-align-middle">
         <Toast />
@@ -19,7 +19,7 @@
                 <div v-if="files.length > 0">
                     <h5>Pending</h5>
                     <div class="flex flex-wrap p-0 sm:p-5 gap-5">
-                        <div v-for="(file, index) of files" :key="file.name + file.type + file.size" class="card flex flex-row border-1 border-round-3xl surface-border align-items-left gap-2">
+                        <div v-for="(file, index) of files" :key="file.name + file.type + file.size" class="card flex flex-row border-1 border-round-3xl p-2 surface-border align-items-left gap-2">
                             <div>
                                 <img role="presentation" class="border-round-3xl h-9rem w-auto w-full" :alt="file.name" :src="file.previewURL" />
                             </div>
@@ -29,7 +29,7 @@
                             <Badge value="Pending" severity="warning" />
                             <div class="flex gap-2">
                             <Button icon="pi pi-trash" @click="onRemoveTemplatingFile(file, removeFileCallback, index)" outlined rounded  severity="danger" ></Button>
-                            <Button @click="uploadEvent" icon="pi pi-upload" rounded outlined severity="success" :disabled="!files || files.length === 0"></Button>
+                            <Button @click="uploadEvent(uploadCallback)" icon="pi pi-upload" rounded outlined severity="success" :disabled="!files || files.length === 0"></Button>
                         </div>
                     </div>
                         </div>
@@ -196,11 +196,13 @@ const onSelectedFiles = async (event) => {
 const uploadEvent = (callback) => {
     console.log(`Attempting to upload, total size: ${totalSize.value}, percentage: ${totalSizePercent.value}`);
     totalSizePercent.value = (totalSize.value / maxFileSize) * 100;
-    if (typeof callback === "function") {
+    if (callback && typeof callback === "function") {
         callback();
     } else {
         console.error("Upload callback is not a function", callback);
-    }};
+        // Handle the case where no callback is provided or it's not a function
+    }
+};
 
 const onTemplatedUpload = () => {
     toast.add({ severity: "info", summary: "Success", detail: "File Uploaded", life: 3000 });
