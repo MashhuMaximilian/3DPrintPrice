@@ -1,19 +1,19 @@
 <template>
 
-  <div class="grid w-12 overflow-hidden ">
+  <div class="grid w-12 overflow-hidden m-4 p-4 ">
   
     <!-- Row 1 -->
-    <div class="col-6 pl-2 ">
+    <div class="col-6 h-auto">
       <!-- Column 1: 60% width -->
       <ThreeViewer />
     </div>
-    <div class="flex flex-grow justify-content-evenly">
+    <div class="col-6  h-auto pl-2">
       <!-- Column 2: 40% width -->
-      <h1>Test</h1>
+      <FileUpload />
     </div>
 
     <!-- Row 2 -->
-    <div class="flex flex-row w-12">
+    <div class="flex flex-row w-12 p-2">
       <!-- Column 1: 100% width -->
       <AdminControls />
     </div>
@@ -24,6 +24,12 @@
 <script setup>
 import ThreeViewer from '@/components/ThreeViewer.vue';
 import AdminControls from '@/components/AdminControls.vue';
+import FileUpload from '@/components/FileUpload.vue';
+
+
+
+
+
 
 </script>
 

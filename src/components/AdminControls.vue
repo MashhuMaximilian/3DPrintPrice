@@ -127,7 +127,6 @@ import Dropdown from 'primevue/dropdown';
 import ColorPicker from 'primevue/colorpicker';
 import Slider from 'primevue/slider';
 import InputText from 'primevue/inputtext';
-// import Card from 'primevue/card';
 import { useEnvironmentLoader } from '@/composables/useEnvironmentLoader'; // Adjust path as needed
 
 import sceneSettingsImage from '@/internalAssets/sceneSettings.png';

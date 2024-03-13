@@ -1,7 +1,7 @@
 <!-- ThreeViewer.vue  -->
 <template>
   <div ref="container">
-    <canvas ref="canvas"></canvas>
+    <canvas class="h-full w-12 pr-2 border-round-3xl"  ref="canvas"></canvas>
   </div>
 </template>
 
@@ -18,13 +18,17 @@ import { useEnvironmentLoader} from '../composables/useEnvironmentLoader'
 import { useViewerControls } from '../composables/viewerControls';
 
 import { usePrinterLoader } from '@/composables/usePrinter';
-
+// import { useSTLfile } from '@/composables/useSTLfile.js';
 
 
 const store = useStore();
 
 const container = ref(null);
 const canvas = ref(null);
+
+
+
+
 
 
 
@@ -36,6 +40,7 @@ let scene, camera, renderer;
 onMounted( () => {
   
  
+
 
 
   if (!container.value || !canvas.value) return;
@@ -70,7 +75,12 @@ const { loadSkybox, loadFloor, setHDREnvironment, toggleAssetVisibility, updateM
 }, { deep: true });
 
 
-
+// watchEffect(() => {
+//   const file = store.state.currentSTLFile;
+//   if (file) {
+//     loadSTLModel(file);
+//   }
+// });
 
 
 watch(() => store.state.selectedSkybox, async (newSkybox) => {
@@ -122,11 +132,11 @@ watch(() => store.state.selectedHDR, (newHDR) => {
   }
 }, { immediate: true });
 
-// watch(() => store.state.hdrIntensity, (newIntensity) => {
-//   if (scene.environment) {
-//     scene.environment.intensity = newIntensity;
-//   }
-// });
+watch(() => store.state.hdrIntensity, (newIntensity) => {
+  if (scene.environment) {
+    scene.environment.intensity = newIntensity;
+  }
+});
 
 // Similar adjustments for any other properties you're watching from the Vuex store
 
@@ -189,9 +199,5 @@ const { loadPrinter } = usePrinterLoader(scene);
 </script>
 
 <style>
-canvas{
-  border-radius: 33px;
-  height: 24rem;
-  width: stretch;
-}
+
 </style>
