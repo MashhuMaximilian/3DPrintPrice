@@ -2,28 +2,27 @@
 <template>
     <div class="card shadow-5 w-12 h-full p-4 border-round-3xl vertical-align-middle">
         <Toast />
-        <FileUpload class="w-8 border-round-3xl" name="demo[]" url="/api/upload" @upload="onTemplatedUpload($event)" :multiple="true" accept=".stl" :maxFileSize="150000000" @select="onSelectedFiles">
+        <FileUpload class="w-auto border-round-3xl" name="demo[]" url="/api/upload" @upload="onTemplatedUpload($event)" :multiple="true" accept=".stl" :maxFileSize="150000000" @select="onSelectedFiles">
             <template #header="{ chooseCallback, uploadCallback, clearCallback, files }">
-                <div class="flex flex-wrap justify-content-between align-items-center flex-1 gap-2">
+                <div class="flex flex-wrap vertical-align-middle flex-1 gap-2">
                     <div class="flex gap-2">
                         <Button @click="chooseCallback()" icon="pi pi-box" rounded outlined></Button>
                         <Button @click="uploadEvent(uploadCallback)" icon="pi pi-cloud-upload" rounded outlined severity="success" :disabled="!files || files.length === 0"></Button>
                         <Button @click="resetUploadState(clearCallback)" icon="pi pi-refresh" rounded outlined severity="danger" :disabled="totalSizePercent === 0"></Button>
                     </div>
                     <ProgressBar :value="totalSizePercent" :showValue="false" :class="['md:w-6 h-1rem w-full md:ml-auto', { 'exceeded-progress-bar': totalSizePercent > 100 }]">
-                        <span class="white-space-nowrap">{{ totalSize }}B / 100Mb</span> </ProgressBar>
+                        <div class="white-space-nowrap">{{ totalSize }}B / 100Mb</div> </ProgressBar>
                 </div>
             </template>
 
             <template #content="{ files, uploadedFiles, removeUploadedFileCallback, removeFileCallback }">
                 <div v-if="files.length > 0">
-                    <h5>Pending</h5>
-                    <div class="flex flex-wrap p-0 sm:p-5 gap-5">
+                    <div class="flex flex-wrap w-12 p-0 my-2 gap-2">
                         <div v-for="(file, index) of files" :key="file.name + file.type + file.size" class="card flex flex-row w-12 border-1 border-round-3xl p-2 surface-border align-items-left gap-2">
                             <div>
-                                <img role="presentation" class="border-round-3xl h-9rem w-auto w-full" :alt="file.name" :src="file.previewURL" />
+                                <img role="presentation" class="border-round-3xl h-9rem w-auto" :alt="file.name" :src="file.previewURL" />
                             </div>
-                            <div class="flex flex-column gap-2 p-2">
+                            <div class="flex flex-column w-8 gap-2 p-2">
                             <span class="font-semibold">{{ file.name }}</span>
                             <div>{{ formatSize(file.size) }}</div>
                             <Badge value="Pending" severity="warning" />
@@ -37,21 +36,30 @@
                 </div>
 
                 <div v-if="uploadedFiles.length > 0">
-                    <h5>Completed</h5>
-                    <div class="flex flex-wrap p-0 border-round-3xl sm:p-5 gap-5">
-                        <div v-for="(file, index) of uploadedFiles" :key="file.name + file.type + file.size" class="card flex flex-row border-1 border-round-3xl p-2 surface-border align-items-left gap-2">
-                            <div>
-                                <img role="presentation" class="border-round-3xl h-9rem w-auto w-full" :alt="file.name" :src="file.previewURL" />
+                    <div class="flex flex-wrap w-12 gap-2">
+                       <div v-for="(file, index) of uploadedFiles" :key="file.name + file.type + file.size" class="card flex flex-row border-1 border-round-3xl w-shrink surface-border p-2 text-center">
+                        <div>
+                                <img role="presentation" class="border-round-3xl h-8rem w-auto" :alt="file.name" :src="file.previewURL" />
                             </div>
-                            <div class="flex flex-column gap-2 p-2">
-                            <span class="font-semibold">{{ file.name }}</span>
+                          <div class="flex flex-column w-12 h-full gap-2 justify-content-center ">
+                            <div class="font-semibold w-8rem surface-overlay white-space-nowrap overflow-hidden text-overflow-ellipsis"> {{ file.name }}</div>
                             <div>{{ formatSize(file.size) }}</div>
-                            <Badge value="Completed" class="mt-3" severity="success" />
-                            <div class="w-12 justify-content-evenly">
+                            <Badge class="mx-1" value="Completed" severity="success" />
+                            <div class="w-12 justify-content-center">
                             <Button icon="pi pi-times" @click="removeUploadedFileCallback(index)" outlined rounded  severity="danger" ></Button>
+                            </div>
                         </div>
                         </div>
-                        </div>
+                          <div class="card flex flex-grow-1 flex-row border-1 border-round-3xl surface-border p-2 gap-2">
+                            <div class="flex-grow-0 flex align-items-center justify-content-center "> 
+                               <Knob v-model="value" :min="0" :max="13" :strokeWidth="12" :size="80"  /> 
+                              </div>
+                            <div class="flex flex-grow-1  flex-column align-items-center justify-content-center gap-2">
+                              <div>Preț:</div> 
+                              <div>12 RON</div>
+                              <Button label="Comandă" icon="pi pi-money-bill" iconPos="left" />
+                            </div>
+                          </div>
                     </div>
                 </div>
             </template>
@@ -75,6 +83,8 @@ import Toast from 'primevue/toast';
 import Button from 'primevue/button';
 import ProgressBar from 'primevue/progressbar';
 import Badge from 'primevue/badge';
+import Knob from 'primevue/knob';
+
 
 import * as THREE from 'three';
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader';
