@@ -19,7 +19,7 @@
                 <div v-if="files.length > 0">
                     <h5>Pending</h5>
                     <div class="flex flex-wrap p-0 sm:p-5 gap-5">
-                        <div v-for="(file, index) of files" :key="file.name + file.type + file.size" class="card flex flex-row border-1 border-round-3xl p-2 surface-border align-items-left gap-2">
+                        <div v-for="(file, index) of files" :key="file.name + file.type + file.size" class="card flex flex-row w-12 border-1 border-round-3xl p-2 surface-border align-items-left gap-2">
                             <div>
                                 <img role="presentation" class="border-round-3xl h-9rem w-auto w-full" :alt="file.name" :src="file.previewURL" />
                             </div>
