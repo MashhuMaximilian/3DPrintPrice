@@ -106,9 +106,9 @@ watch(() => store.state.currentSTLFile, async (newFile) => {
       mesh.scale.set(scaleFactor, scaleFactor, scaleFactor);
 
       // Set the position and orientation of the mesh
-      const targetPosition = new THREE.Vector3(0, 25, 10); // Adjust the coordinates as needed
+      const targetPosition = new THREE.Vector3(0, 27, 10); // Adjust the coordinates as needed
       mesh.position.copy(targetPosition);
-      mesh.rotation.x = Math.PI/2; // Rotate the mesh upside down
+      mesh.rotation.x = Math.PI/2; // Rotate the mesh upfside down
 
       // Add the new STL mesh to the scene
       scene.add(mesh);

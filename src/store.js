@@ -10,6 +10,8 @@ const store = createStore({
 
     currentSTLFile: null,
     currentSTLFileName: null,
+    scene: null, // Add this if you are committing a scene
+    stlHeight: 0, // Add this if you are updating STL height
 
     
 
@@ -40,7 +42,6 @@ const store = createStore({
     },
 
     setHDRIntensity(state, value) {
-      console.log('Mutation: setHDRIntensity', value);
       state.hdrIntensity = value;
     },
 
@@ -66,7 +67,15 @@ const store = createStore({
         state.scene.remove(state.currentSTLFile);
         state.currentSTLFile = null;
       }
-    }
+    },
+
+    setSTLHeight(state, height) {
+      state.stlHeight = height;
+    },
+
+    setScene(state, newScene) {
+      state.scene = newScene; // Make sure you have a `scene` state property if you use this
+    },
   
   
   },
@@ -105,9 +114,11 @@ const store = createStore({
     },
 
     updateHDRIntensity({ commit }, value) {
-      console.log('Action: updateHDRIntensity', value);
-
       commit('setHDRIntensity', value);
+    },
+
+    updateSTLHeight({ commit }, height) {
+      commit('setSTLHeight', height); // Define a mutation `setSTLHeight` if you want to store the height in your state
     },
   
 

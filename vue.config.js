@@ -4,17 +4,6 @@ module.exports = defineConfig({
 
   transpileDependencies: true,
 
-  devServer: {
-    proxy: {
-      '/api': {
-        target: ' http://localhost:8085/ ',
-        changeOrigin: true,
-        pathRewrite: { '^/api': '' },
-      },
-    },
-  },
-
-
   chainWebpack: config => {
     // Add loader for GLB files
     config.module

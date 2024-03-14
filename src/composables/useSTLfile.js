@@ -29,8 +29,15 @@ export function useSTLfile(store) {
 
       // Calculate the bounding box of the mesh
       const box = new THREE.Box3().setFromObject(mesh);
+      const center = new THREE.Vector3();
+      box.getCenter(center);
+
+
       const size = new THREE.Vector3();
       box.getSize(size);
+
+      geometry.translate(-center.x, -center.y, -center.z);
+
 
       // Calculate the height of the STL model
       const height = size.y;

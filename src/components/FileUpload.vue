@@ -2,7 +2,7 @@
 <template>
     <div class="card shadow-5 w-12 h-full p-4 border-round-3xl vertical-align-middle">
         <Toast />
-        <FileUpload class="w-8 border-round-3xl" name="demo[]" url="/api/upload" @upload="onTemplatedUpload($event)" :multiple="true" accept=".stl" :maxFileSize="50000000" @select="onSelectedFiles">
+        <FileUpload class="w-8 border-round-3xl" name="demo[]" url="/api/upload" @upload="onTemplatedUpload($event)" :multiple="true" accept=".stl" :maxFileSize="150000000" @select="onSelectedFiles">
             <template #header="{ chooseCallback, uploadCallback, clearCallback, files }">
                 <div class="flex flex-wrap justify-content-between align-items-center flex-1 gap-2">
                     <div class="flex gap-2">
@@ -159,7 +159,7 @@ const files = ref([]);
 
 
 // Increase the limit to 100MB (100 * 1024 * 1024)
-const maxFileSize = 100 * 1024 * 1024;
+const maxFileSize = 150 * 1024 * 1024;
 
 const onRemoveTemplatingFile = (file, removeFileCallback, index) => {
   console.log(`Removing file: ${file.name}, size: ${file.size}`);
