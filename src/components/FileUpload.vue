@@ -50,14 +50,28 @@
                             </div>
                         </div>
                         </div>
-                          <div class="card flex flex-grow-1 flex-row border-1 border-round-3xl surface-border p-2 gap-2">
-                            <div class="flex-grow-0 flex align-items-center justify-content-center "> 
-                               <Knob v-model="value" :min="0" :max="13" :strokeWidth="12" :size="80"  /> 
-                              </div>
-                            <div class="flex flex-grow-1  flex-column align-items-center justify-content-center gap-2">
+
+                          <div class="card flex flex-grow-1 flex-column justify-content-start border-1 border-round-3xl surface-border p-2 gap-2">
+                            
+                            <div>
+                              <InputNumber v-model="quantity" inputId="horizontal-buttons" showButtons buttonLayout="horizontal" :step="1" :min="0" prefix="Cantitate">
+                              <template #incrementbuttonicon>
+                                  <span class="pi pi-plus" />
+                              </template>
+                              <template #decrementbuttonicon>
+                                  <span class="pi pi-minus" />
+                              </template>
+                          </InputNumber>
+                          </div>
+
+
+                          <div class="flex flex-row">
+                               <Knob v-model="height" :min="0" :max="13" :step="0.11" :strokeWidth="16" :size="80"  /> 
+                            <div class="flex flex-grow-1 flex-column align-items-center justify-content-center gap-2">
                               <div>Preț:</div> 
                               <div>12 RON</div>
-                              <Button label="Comandă" icon="pi pi-money-bill" iconPos="left" />
+                              <Button label="Comandă" icon="pi pi-money-bill" iconPos="left" severity="success"  />
+                            </div>
                             </div>
                           </div>
                     </div>
@@ -84,6 +98,8 @@ import Button from 'primevue/button';
 import ProgressBar from 'primevue/progressbar';
 import Badge from 'primevue/badge';
 import Knob from 'primevue/knob';
+import InputNumber from 'primevue/inputnumber';
+
 
 
 import * as THREE from 'three';
@@ -92,7 +108,8 @@ import { STLLoader } from 'three/examples/jsm/loaders/STLLoader';
 import { useStore } from 'vuex';
 const store = useStore();
 
-
+const quantity = ref(10.5);
+const height = ref(8);
 
 
 const generateSTLPreview = (file) => {
@@ -260,3 +277,9 @@ const formatSize = (bytes) => {
     return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 };
 </script>
+<style>
+.p-inputnumber-input{
+width: 8rem;
+font-size: 12px;
+}
+</style>
