@@ -6,12 +6,12 @@
             <template #header="{ chooseCallback, uploadCallback, clearCallback, files }">
                 <div class="flex flex-wrap vertical-align-middle flex-1 gap-2">
                     <div class="flex gap-2">
-                        <Button @click="chooseCallback()" icon="pi pi-box" rounded outlined></Button>
-                        <Button @click="uploadEvent(uploadCallback)" icon="pi pi-cloud-upload" rounded outlined severity="success" :disabled="!files || files.length === 0"></Button>
-                        <Button @click="resetUploadState(clearCallback)" icon="pi pi-refresh" rounded outlined severity="danger" :disabled="totalSizePercent === 0"></Button>
+                        <Button @click="chooseCallback()" icon="pi pi-plus" rounded outlined></Button>
+                        <Button class="text-xs" @click="uploadEvent(uploadCallback)" icon="pi pi-upload" rounded outlined severity="success" label="Încarcă" :disabled="!files || files.length === 0"></Button>
+                        <Button @click="resetUploadState(clearCallback)" icon="pi pi-trash" rounded outlined severity="danger" :disabled="totalSizePercent === 0"></Button>
                     </div>
-                    <ProgressBar :value="totalSizePercent" :showValue="false" :class="['md:w-6 h-1rem w-full md:ml-auto', { 'exceeded-progress-bar': totalSizePercent > 100 }]">
-                        <div class="white-space-nowrap">{{ totalSize }}B / 100Mb</div> </ProgressBar>
+                    <ProgressBar :value="totalSizePercent" :showValue="true" :class="['md:w-6 h-1rem w-full md:ml-auto', { 'exceeded-progress-bar': totalSizePercent > 100 }]">
+                      <p style="font-size: 0.65rem;"> {{ (totalSize / 1048576).toFixed(2) }} MB </p> </ProgressBar>
                 </div>
             </template>
 
@@ -54,7 +54,7 @@
                           <div class="card flex flex-grow-1 flex-column justify-content-start border-1 border-round-3xl surface-border p-2 gap-2">
                             
                             <div>
-                              <InputNumber v-model="quantity" inputId="horizontal-buttons" showButtons buttonLayout="horizontal" :step="1" :min="0" prefix="Cantitate">
+                              <InputNumber v-model="quantity" inputId="horizontal-buttons" showButtons buttonLayout="horizontal" :step="1" :min="0" suffix=" buc.">
                               <template #incrementbuttonicon>
                                   <span class="pi pi-plus" />
                               </template>
@@ -66,21 +66,29 @@
 
 
                           <div class="flex flex-row">
-                               <Knob v-model="height" :min="0" :max="13" :step="0.11" :strokeWidth="16" :size="80"  /> 
-                            <div class="flex flex-grow-1 flex-column align-items-center justify-content-center gap-2">
+                               
+                            <div class="knob-container">
+                                <Knob v-model="height" :size="90" :min="0" :max="13"  text-color="var(--primary-color, Black)"  :step="0.1" :strokeWidth="16"  :valueTemplate="`${height.toFixed(2)}`" /> 
+                                  <div style="margin-top: -2rem;" class="unit-label text-primary">cm</div>
+                            </div>
+                              <div class="flex flex-grow-1 flex-column align-items-center justify-content-center gap-2">
                               <div>Preț:</div> 
                               <div>12 RON</div>
-                              <Button label="Comandă" icon="pi pi-money-bill" iconPos="left" severity="success"  />
+                              <Button label="În coș" icon="pi pi-shopping-cart" iconPos="left" severity="success"  />
                             </div>
                             </div>
                           </div>
                     </div>
-                </div>
+                </div>  
+
             </template>
             <template #empty>
                 <div class="flex align-items-center justify-content-center flex-column">
                     <i class="pi pi-cloud-upload border-2 border-circle p-5 text-8xl text-400 border-400" />
-                    <p class="mt-4 mb-0">Drag and drop files to here to upload.</p>
+                    <div class="py-4"> 
+                    <span class="text-md text-600">Trage fișierele tale STL aici.</span> <br>
+                    <span class="text-xs text-400">Limită maximă de 150MB.</span>
+                  </div>
                 </div>
             </template>
         </FileUpload>
@@ -108,7 +116,7 @@ import { STLLoader } from 'three/examples/jsm/loaders/STLLoader';
 import { useStore } from 'vuex';
 const store = useStore();
 
-const quantity = ref(10.5);
+const quantity = ref(1);
 const height = ref(8);
 
 
@@ -280,6 +288,8 @@ const formatSize = (bytes) => {
 <style>
 .p-inputnumber-input{
 width: 8rem;
-font-size: 12px;
+text-align: center;
 }
+
+
 </style>
