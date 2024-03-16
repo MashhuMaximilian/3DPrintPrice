@@ -123,11 +123,13 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useStore } from 'vuex';
+
 import Dropdown from 'primevue/dropdown';
 import ColorPicker from 'primevue/colorpicker';
 import Slider from 'primevue/slider';
 import InputText from 'primevue/inputtext';
 import { useEnvironmentLoader } from '@/composables/useEnvironmentLoader'; // Adjust path as needed
+
 
 import sceneSettingsImage from '@/internalAssets/sceneSettings.png';
 import modelSettingsImage from '@/internalAssets/modelSettings.png';
