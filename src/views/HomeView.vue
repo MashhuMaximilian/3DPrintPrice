@@ -1,23 +1,27 @@
 <template>
 
-  <div class="grid w-12 overflow-hidden m-4 p-4 ">
+  <div class="flex flex-wrap w-12 overflow-x-hidden overflow-y-scroll">
   
+    <!-- <div class="flex flex-row w-screen"> -->
     <!-- Row 1 -->
-    <div class="col-6 h-auto">
+    <div class="sm:col-12 md:col-5 max-h-30rem">
       <!-- Column 1: 60% width -->
       <ThreeViewer />
     </div>
-    <div class="col-6  h-auto pl-2">
+
+    <div class="sm:col-12 md:col-7 flex-grow-1 max-h-30rem">
       <!-- Column 2: 40% width -->
       <FileUpload />
     </div>
+  </div>
 
     <!-- Row 2 -->
-    <div class="flex flex-row w-12 p-2">
+    <div class="w-12 p-2">
       <!-- Column 1: 100% width -->
       <AdminControls />
     </div>
-  </div>
+
+  <!-- </div> -->
 </template>
 
 
@@ -52,5 +56,6 @@ import FileUpload from '@/components/FileUpload.vue';
   overflow-x:hidden;
   width:100%;
 }
+
 
 </style>

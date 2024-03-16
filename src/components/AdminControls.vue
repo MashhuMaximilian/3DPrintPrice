@@ -1,10 +1,8 @@
 <!-- AdminControls.vue   -->
 <template>
 
-
-
-    <div class="card shadow-5 w-12 h-22rem m-2 mb-4 border-round-3xl vertical-align-middle text-left gap-2">
-        <TabView class="tabview-custom">
+    <div class="border-round-3xl shadow-5 w-12  max-h-full m-2 mb-4 vertical-align-middle text-left gap-2">
+        <TabView class="border-round-3xl tabview-custom">
             <TabPanel>
                 <template #header>
                     <div class="flex align-items-center gap-2">
@@ -12,46 +10,46 @@
                         <span class="font-bold white-space-nowrap">Scene Settings</span>
                     </div>
                 </template>
-<div class ="flex flex-row">
-                <div  class="text-center flex flex-column w-3 justify-content-left justify-content-between py-4">
-    <Dropdown class="flex flex-row p-2 border-round-xl" v-model="selectedSkybox" :options="skyboxOptions" placeholder="Choose Skybox" @change="updateEnvironmentProperty('Skybox', $event)" />
-  <Dropdown class="flex flex-row p-2 border-round-xl"  v-model="selectedFloor" :options="floorOptions" placeholder="Choose Floor" @change="updateEnvironmentProperty('Floor', $event)" />
-  <Dropdown class="flex flex-row p-2 border-round-xl" v-model="selectedHDR" :options="hdrOptions" placeholder="Choose HDR" @change="updateEnvironmentProperty('HDR', $event)" />
+<div class ="flex justify-content-evenly md:flex-row sm:flex-column">
+   <div  class="flex text-center justify-content-between flex-column py-2 md:w-3   sm:w-12">
+    <Dropdown class="flex p-2 border-round-xl" v-model="selectedSkybox" :options="skyboxOptions" placeholder="Choose Skybox" @change="updateEnvironmentProperty('Skybox', $event)" />
+    <Dropdown class="flex p-2 border-round-xl"  v-model="selectedFloor" :options="floorOptions" placeholder="Choose Floor" @change="updateEnvironmentProperty('Floor', $event)" />
+    <Dropdown class="flex p-2 border-round-xl" v-model="selectedHDR" :options="hdrOptions" placeholder="Choose HDR" @change="updateEnvironmentProperty('HDR', $event)" />
   </div>
 
 
-  <div class="text-right flex flex-column w-6 justify-content-left justify-content-between px-8 py-4" >
+  <div class="md:w-6 text-right flex flex-column w-6 justify-content-left justify-content-between gap-3 px-4  sm:flex flex-column justify-content-start w-12"  >
 
-        <div class="text-right flex flex-row justify-content-left vertical-align-middle" >
-          <span class="w-6  mr-4 font-medium">Metalness</span>
+        <div class="text-right flex flex-row " >
+          <span class="w-4 min-w-0  mr-4 font-medium">Metalness</span>
           <Slider class="w-full p-2 border-round-md" v-model="metalness" @change="updateSphereProperty('metalness', metalness)" :min="0" :max="1" :step="0.01" />
 
         </div>
-        <div class="text-right flex flex-row justify-content-left" >
-                  <span class="w-6 mr-4 font-medium">Roughness</span>
+
+        <div class="text-right flex flex-row " >
+                  <span class="w-3 mr-4 font-medium">Roughness</span>
                   <Slider class="w-full p-2 border-round-md"  v-model="roughness" :min="0" :max="1" :step="0.01" @change="updateSphereProperty('roughness', roughness)" />
         </div>
 
-        <div class="text-right flex flex-row justify-content-left" >
-            <span class="w-6  mr-4 font-medium">Sky Glow</span>
+        <div class="text-right flex flex-row" >
+            <span class="w-3  mr-4 font-medium">Sky Glow</span>
             <Slider class="w-full p-2 border-round-md" v-model="emissiveIntensity" :min="0" :max="1" :step="0.01" @change="updateSphereProperty('emissiveIntensity', emissiveIntensity)" />
         </div>
 
-
-        <div class="text-right flex flex-row justify-content-left" >
-            <span class="w-6 mr-4 font-medium">Opacity</span>
+        <div class="text-right flex flex-row" >
+            <span class="w-3 mr-4 font-medium">Opacity</span>
             <Slider class="w-full p-2 border-round-md" v-model="opacity" :min="0" :max="1" :step="0.01" @change="updateSphereProperty('opacity', opacity)" />
         </div>
 
-        <div class="text-right flex flex-row justify-content-left" >
-            <span class="w-6 mr-4 font-medium">HDR Intensity</span>
+        <div class="text-right flex flex-row" >
+            <span class="w-3 mr-4 font-medium">HDR Intensity</span>
             <Slider class="w-full p-2 border-round-md" v-model="hdrIntensity" :min="0" :max="6" :step="0.1" @change="updateHDRIntensity" />
                   </div>
 
 </div>
 
 
-<div class="col-3 flex flex-column justify-content-between gap-6 py-4">
+<div class="md:w-3 flex flex-column justify-content-between gap-6 py-4 sm:w-12">
 
     <div class="flex flex-row justify-content-start ">
       <div class="w-full">
@@ -74,7 +72,6 @@
       <span class="w-8 font-medium mx-2">Floor Color</span> 
     </div>
     </div>
-
 
     <div class="flex flex-row justify-content-start">
       <div class="w-full">
@@ -152,7 +149,6 @@ const hdrIntensity = computed({
     });
 
 const {  skyboxes, floors, hdrs  } = useEnvironmentLoader(/* scene, renderer */); // Pass your scene and renderer
-// const { skyboxes, floors, hdrs } = useEnvironmentLoader(/* scene, renderer */); // Pass your scene and renderer
 
 function updateHDRIntensity(value) {
   store.dispatch('updateHDRIntensity', parseFloat(value));
@@ -191,17 +187,18 @@ const selectedHDR = computed({
   }
 });
 
-const sphereColor = ref('#8c32ff');
-const emissiveColor = ref('#ffffff');
 
 
 // Define properties as reactive references
-const metalness = ref(0.7);
-const roughness = ref(0.4);
-const emissiveIntensity = ref(0.01);
-const opacity = ref(0.9);
+const metalness = ref(store.state.sphereProperties.metalness);
+const roughness = ref(store.state.sphereProperties.roughness);
+const emissiveIntensity = ref(store.state.sphereProperties.emissiveIntensity);
+const opacity = ref(store.state.sphereProperties.opacity);
+const sphereColor = ref(store.state.sphereProperties.sphereColor);
+const emissiveColor = ref(store.state.sphereProperties.emissiveColor);
 
-const floorColor = ref('#8c52ff');
+
+const floorColor = ref(store.state.floorProperties.floorColor);
 
 const normalizeDropdownEventValue = (event) => {
   if (event && typeof event === 'object' && event.value) {

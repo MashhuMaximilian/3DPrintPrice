@@ -1,7 +1,7 @@
 <!-- ThreeViewer.vue  -->
 <template>
   <div ref="container">
-    <canvas class="h-full w-12 pr-2 border-round-3xl"  ref="canvas"></canvas>
+    <canvas class="max-h-29rem border-round-3xl"  ref="canvas"></canvas>
   </div>
 </template>
 
@@ -22,7 +22,7 @@ const store = useStore();
 const container = ref(null);
 const canvas = ref(null);
 
-let scene, camera, renderer;
+let scene, camera;
 
 onMounted(() => {
   if (!container.value || !canvas.value) return;
@@ -30,8 +30,8 @@ onMounted(() => {
   scene = useScene();
   store.commit('setScene', scene);
   camera = useCamera(container.value.clientWidth / container.value.clientHeight);
-  renderer = useRenderer(canvas.value);
-  renderer.setSize(container.value.clientWidth, container.value.clientHeight);
+  const { renderer, resizeRenderer } = useRenderer(canvas.value, container, camera);
+
   useLighting(scene);
 
   const { update: updateControls } = useViewerControls(camera, renderer);
@@ -71,6 +71,7 @@ onMounted(() => {
   function animate() {
     requestAnimationFrame(animate);
     updateControls();
+    resizeRenderer(); // Call resizeRenderer in the animation loop
     renderer.render(scene, camera);
   }
 

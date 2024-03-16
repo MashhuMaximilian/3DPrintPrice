@@ -1,6 +1,6 @@
 <!-- FileUpload  -->
 <template>
-    <div class="card shadow-5 w-12 h-full p-4 border-round-3xl vertical-align-middle">
+    <div class="card shadow-5 h-full p-4 border-round-3xl vertical-align-middle">
         <Toast />
         <FileUpload class="w-auto border-round-3xl" name="demo[]" url="/api/upload" @upload="onTemplatedUpload($event)" :multiple="true" accept=".stl" :maxFileSize="150000000" @select="onSelectedFiles">
             <template #header="{ chooseCallback, uploadCallback, clearCallback, files }">

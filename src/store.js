@@ -17,15 +17,15 @@ const store = createStore({
 
 
     floorProperties: {
-      floorColor: '',
+      floorColor: '#f9f9f9',
     },
 
     sphereProperties: {
-      sphereColor: '#8c52ff',
+      sphereColor: '#544654',
       metalness: 0.5,
       roughness: 0.2,
       emissiveIntensity: 0.02,
-      opacity: 0.9,
+      opacity: 0.8,
       emissiveColor: '#ffffff'
     },
   },
