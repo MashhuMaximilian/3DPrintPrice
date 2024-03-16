@@ -48,6 +48,8 @@ export function usePrinterLoader(scene) {
 
       gltf.scene.scale.set(scaleX, scaleY, scaleZ);
 
+
+ 
       
       scene.add(gltf.scene);
 

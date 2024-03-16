@@ -7,11 +7,13 @@ const store = createStore({
     selectedSkybox: 'lightbluesky.glb',
     selectedFloor: 'seamless__floor_tiled_texture_v.glb',
     selectedHDR:'moonlessgolf.hdr',
+    
 
     currentSTLFile: null,
     currentSTLFileName: null,
-    scene: null, // Add this if you are committing a scene
-    stlHeight: 0, // Add this if you are updating STL height
+    scene: null, 
+    stlHeight: 0,
+    stlUploadCompleted: false,
 
     
 
@@ -30,6 +32,10 @@ const store = createStore({
     },
   },
   mutations: {
+
+    setSTLUploadCompleted(state, value) {
+      state.stlUploadCompleted = value;
+    },
   
     updateSkybox(state, value) {
       state.selectedSkybox = value;

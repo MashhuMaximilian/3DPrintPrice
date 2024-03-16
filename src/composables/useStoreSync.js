@@ -1,72 +1,27 @@
 // src/composables/useStoreSync.js
-import * as THREE from 'three';
 
-import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
 import { useEnvironmentLoader } from '../composables/useEnvironmentLoader';
+import { useSTLfile } from '../composables/useSTLfile';
 import { watch } from 'vue';
 
 let renderer;
-let currentMesh = null; // Moved outside to maintain its state
+// let currentMesh = null; // Moved outside to maintain its state
 
 export function useStoreSync(store, { scene, loadSkybox, loadFloor, setHDREnvironment, setBackgroundSphere, toggleBackgroundSphereVisibility, updateMaterialEnvMapIntensity }) {
 
     const { toggleAssetVisibility} = useEnvironmentLoader(scene, renderer);
    
-watch(() => store.state.currentSTLFile, async (newFile) => {
-    if (newFile) {
-      const loader = new STLLoader();
-      const reader = new FileReader();
+    const { loadSTLModel } = useSTLfile(store, scene);
+
+    watch(
+      () => store.state.currentSTLFile,
+      async (newFile) => {
+        await loadSTLModel(newFile);
+      },
+      { immediate: true }
+    );
   
-      reader.onload = async (event) => {
-        const contents = event.target.result;
-        const geometry = loader.parse(contents);
-        const material = new THREE.MeshStandardMaterial();
-        const mesh = new THREE.Mesh(geometry, material);
   
-        store.commit('setCurrentSTLFileName', newFile.name);
-  
-        // Remove the previous STL mesh from the scene
-        if (currentMesh) {
-          scene.remove(currentMesh);
-        }
-  
-        // Calculate the bounding box of the mesh
-        const box = new THREE.Box3().setFromObject(mesh);
-        const size = new THREE.Vector3();
-        box.getSize(size);
-  
-        // Calculate the height of the STL model
-        const height = size.y;
-        console.log('STL model height:', height);
-  
-        // Store the height in the Vuex store for pricing calculations
-        store.dispatch('updateSTLHeight', height);
-  
-        // Scale the mesh to a desired size
-        const desiredSize = 8; // Adjust this value as needed
-        const scaleFactor = desiredSize / Math.max(size.x, size.y, size.z);
-        mesh.scale.set(scaleFactor, scaleFactor, scaleFactor);
-  
-        // Set the position and orientation of the mesh
-        const targetPosition = new THREE.Vector3(0, 27, 10); // Adjust the coordinates as needed
-        mesh.position.copy(targetPosition);
-        mesh.rotation.x = Math.PI/2; // Rotate the mesh upfside down
-  
-        // Add the new STL mesh to the scene
-        scene.add(mesh);
-        currentMesh = mesh;
-      };
-  
-      reader.readAsArrayBuffer(newFile);
-    } else {
-      // Remove the current STL mesh from the scene if newFile is null or undefined
-      if (currentMesh) {
-        scene.remove(currentMesh);
-        currentMesh = null;
-        store.commit('setCurrentSTLFileName', null);
-      }
-    }
-  }, { immediate: true });
 
   watch(() => store.state.selectedSkybox, (newSkybox) => {
     loadSkybox(newSkybox);

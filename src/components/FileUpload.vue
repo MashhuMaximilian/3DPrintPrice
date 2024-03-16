@@ -68,8 +68,8 @@
                           <div class="flex flex-row">
                                
                             <div class="knob-container">
-                                <Knob v-model="height" :size="90" :min="0" :max="13"  text-color="var(--primary-color, Black)"  :step="0.1" :strokeWidth="16"  :valueTemplate="`${height.toFixed(2)}`" /> 
-                                  <div style="margin-top: -2rem;" class="unit-label text-primary">cm</div>
+                                <Knob v-model="height" :size="90" :min="0" :max="160"  text-color="var(--primary-color, Black)"  :step="1" :strokeWidth="16"  /> 
+                                  <div style="margin-top: -2rem;" class="unit-label text-primary-400 font-semibold text-sm">mm</div>
                             </div>
                               <div class="flex flex-grow-1 flex-column align-items-center justify-content-center gap-2">
                               <div>Preț:</div> 
@@ -117,7 +117,7 @@ import { useStore } from 'vuex';
 const store = useStore();
 
 const quantity = ref(1);
-const height = ref(8);
+const height = ref(80);
 
 
 const generateSTLPreview = (file) => {

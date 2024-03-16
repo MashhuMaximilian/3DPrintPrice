@@ -18,6 +18,8 @@ import { useViewerControls } from '../composables/viewerControls';
 import { usePrinterLoader } from '@/composables/usePrinter';
 import { useStoreSync } from '@/composables/useStoreSync'; // Import the new composable
 
+
+
 const store = useStore();
 const container = ref(null);
 const canvas = ref(null);
@@ -69,10 +71,10 @@ onMounted(() => {
   }
 
   function animate() {
-    requestAnimationFrame(animate);
-    updateControls();
-    resizeRenderer(); // Call resizeRenderer in the animation loop
-    renderer.render(scene, camera);
+  requestAnimationFrame(animate);
+  updateControls();
+  resizeRenderer(); // Call resizeRenderer in the animation loop
+  renderer.render(scene, camera);
   }
 
   animate();

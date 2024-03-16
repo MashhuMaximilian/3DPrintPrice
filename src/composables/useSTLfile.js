@@ -1,69 +1,81 @@
 import * as THREE from 'three';
 
-// useSTLfile.js
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
 
-export function useSTLfile(store) {
-  function loadSTLModel(file) {
-    if (!(file instanceof Blob)) {
-      console.error('Invalid file type:', file);
-      return;
-    }
+export function useSTLfile(store, scene) {
+  let currentMesh = null;
 
-    const fileReader = new FileReader();
-    console.log('Loading STL model:', file.name);
-    const loader = new STLLoader();
+  async function loadSTLModel(file) {
+    if (file) {
+      const loader = new STLLoader();
+      const reader = new FileReader();
 
-    fileReader.onload = (e) => {
-      console.log('File read completed, parsing geometry');
-      const geometry = loader.parse(e.target.result);
+      reader.onload = async (event) => {
+        const contents = event.target.result;
+        const geometry = loader.parse(contents);
+        const material = new THREE.MeshStandardMaterial();
+        const mesh = new THREE.Mesh(geometry, material);
 
-      if (!geometry) {
-        console.error('Error parsing STL geometry');
-        return;
+        if (currentMesh) {
+          scene.remove(currentMesh);
+        }
+
+        const box = new THREE.Box3().setFromObject(mesh);
+        const size = new THREE.Vector3();
+        box.getSize(size);
+
+        const height = size.y;
+        console.log('STL model height:', height);
+
+        store.dispatch('updateSTLHeight', height);
+
+        const desiredSize = 8;
+        const scaleFactor = desiredSize / Math.max(size.x, size.y, size.z);
+        mesh.scale.set(scaleFactor, scaleFactor, scaleFactor);
+
+        const targetPosition = new THREE.Vector3(0, 27, 10);
+        mesh.position.copy(targetPosition);
+        mesh.rotation.x = Math.PI / 2;
+
+        scene.add(mesh);
+        store.commit('setSTLUploadCompleted', true);
+        currentMesh = mesh;
+
+        // Trigger the animation after the STL model is loaded
+        animateCapacGroup();
+      };
+
+      reader.readAsArrayBuffer(file);
+    } else {
+      if (currentMesh) {
+        scene.remove(currentMesh);
+        currentMesh = null;
+        store.commit('setCurrentSTLFileName', null);
       }
+    }
+  }
 
-      console.log('Geometry parsed successfully');
-      const material = new THREE.MeshStandardMaterial();
-      const mesh = new THREE.Mesh(geometry, material);
+  function animateCapacGroup() {
+    const capacGroup = scene.getObjectByName('capac');
+    if (capacGroup) {
+      const targetY = 80; // Define how high you want to move the capac group
+      const duration = 3000; // Duration of the animation in milliseconds
+      const startTime = performance.now();
 
-      // Calculate the bounding box of the mesh
-      const box = new THREE.Box3().setFromObject(mesh);
-      const center = new THREE.Vector3();
-      box.getCenter(center);
+      const animate = function (time) {
+        const elapsedTime = time - startTime;
+        const fraction = elapsedTime / duration;
 
+        if (fraction < 1) {
+          capacGroup.position.y += (targetY * fraction) - capacGroup.position.y;
+          requestAnimationFrame(animate);
+        } else {
+          capacGroup.position.y = targetY;
+        }
+      };
 
-      const size = new THREE.Vector3();
-      box.getSize(size);
-
-      geometry.translate(-center.x, -center.y, -center.z);
-
-
-      // Calculate the height of the STL model
-      const height = size.y;
-      console.log('STL model height:', height);
-
-      // Store the height in the Vuex store for pricing calculations
-      store.dispatch('updateSTLHeight', height);
-
-      // Scale the mesh to a desired size
-      const desiredSize = 1; // Adjust this value as needed
-      const scaleFactor = desiredSize / Math.max(size.x, size.y, size.z);
-      mesh.scale.set(scaleFactor, scaleFactor, scaleFactor);
-
-      // Set the position and orientation of the mesh
-      const targetPosition = new THREE.Vector3(0, 10, 0); // Adjust the coordinates as needed
-      mesh.position.copy(targetPosition);
-      mesh.rotation.x = Math.PI; // Rotate the mesh upside down
-
-      store.dispatch('updateCurrentSTLFile', mesh);
-    };
-
-    fileReader.onerror = (error) => {
-      console.error('Error reading STL file:', error);
-    };
-
-    fileReader.readAsArrayBuffer(file);
+      requestAnimationFrame(animate);
+    }
   }
 
   return { loadSTLModel };
