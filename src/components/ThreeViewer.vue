@@ -32,7 +32,9 @@ onMounted(() => {
   scene = useScene();
   store.commit('setScene', scene);
   camera = useCamera(container.value.clientWidth / container.value.clientHeight);
+  console.log("camera initialized Three.vue", camera)
   const { renderer, resizeRenderer } = useRenderer(canvas.value, container, camera);
+  
 
   useLighting(scene);
 
@@ -44,6 +46,7 @@ onMounted(() => {
   // Use the new composable to set up the watchers
   useStoreSync(store, {
     scene,
+    camera,
     loadSkybox,
     loadFloor,
     setHDREnvironment,

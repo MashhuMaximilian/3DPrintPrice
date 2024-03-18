@@ -1,11 +1,15 @@
+//useSTLfile.js
 import * as THREE from 'three';
 
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
+import { useAnimateLid } from './animateLid';
 
 export function useSTLfile(store, scene) {
   let currentMesh = null;
 
-  async function loadSTLModel(file) {
+  async function loadSTLModel(file, camera) {
+    const { animateCapacGroup } = useAnimateLid(scene, camera); // Initialize animateCapacGroup
+
     if (file) {
       const loader = new STLLoader();
       const reader = new FileReader();
@@ -37,12 +41,14 @@ export function useSTLfile(store, scene) {
         mesh.position.copy(targetPosition);
         mesh.rotation.x = Math.PI / 2;
 
+        mesh.name = 'capac'; // Name the mesh to be recognized by the animation function.
         scene.add(mesh);
         store.commit('setSTLUploadCompleted', true);
         currentMesh = mesh;
 
-        // Trigger the animation after the STL model is loaded
-        animateCapacGroup();
+        console.log(camera); // This should log the camera object or undefined
+        animateCapacGroup(); // Directly trigger the animation
+
       };
 
       reader.readAsArrayBuffer(file);
@@ -55,28 +61,6 @@ export function useSTLfile(store, scene) {
     }
   }
 
-  function animateCapacGroup() {
-    const capacGroup = scene.getObjectByName('capac');
-    if (capacGroup) {
-      const targetY = 80; // Define how high you want to move the capac group
-      const duration = 3000; // Duration of the animation in milliseconds
-      const startTime = performance.now();
-
-      const animate = function (time) {
-        const elapsedTime = time - startTime;
-        const fraction = elapsedTime / duration;
-
-        if (fraction < 1) {
-          capacGroup.position.y += (targetY * fraction) - capacGroup.position.y;
-          requestAnimationFrame(animate);
-        } else {
-          capacGroup.position.y = targetY;
-        }
-      };
-
-      requestAnimationFrame(animate);
-    }
-  }
 
   return { loadSTLModel };
 }

@@ -1,27 +1,21 @@
 // src/composables/useStoreSync.js
-
 import { useEnvironmentLoader } from '../composables/useEnvironmentLoader';
 import { useSTLfile } from '../composables/useSTLfile';
 import { watch } from 'vue';
 
-let renderer;
-// let currentMesh = null; // Moved outside to maintain its state
-
-export function useStoreSync(store, { scene, loadSkybox, loadFloor, setHDREnvironment, setBackgroundSphere, toggleBackgroundSphereVisibility, updateMaterialEnvMapIntensity }) {
-
+export function useStoreSync(store, { scene, camera, loadSkybox, loadFloor, setHDREnvironment, setBackgroundSphere, toggleBackgroundSphereVisibility, updateMaterialEnvMapIntensity }) {
+    let renderer;
+    
     const { toggleAssetVisibility} = useEnvironmentLoader(scene, renderer);
-   
     const { loadSTLModel } = useSTLfile(store, scene);
+    
 
-    watch(
-      () => store.state.currentSTLFile,
-      async (newFile) => {
-        await loadSTLModel(newFile);
-      },
-      { immediate: true }
-    );
-  
-  
+    // Define the watcher for currentSTLFile state changes
+    watch(() => store.state.currentSTLFile, async (newFile) => {
+      if (newFile) {
+        await loadSTLModel(newFile, camera); // Now passing camera as well
+      }
+    }, { immediate: true });
 
   watch(() => store.state.selectedSkybox, (newSkybox) => {
     loadSkybox(newSkybox);
