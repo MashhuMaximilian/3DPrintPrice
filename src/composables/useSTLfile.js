@@ -33,7 +33,7 @@ export function useSTLfile(store, scene) {
 
         store.dispatch('updateSTLFile', height);
 
-        const desiredSize = 8;
+        const desiredSize = 7.5;
         const scaleFactor = desiredSize / Math.max(size.x, size.y, size.z);
         mesh.scale.set(scaleFactor, scaleFactor, scaleFactor);
 

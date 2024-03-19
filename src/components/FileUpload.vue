@@ -41,7 +41,11 @@
                     </div>
                 </div>
 
-                <div v-if="uploadedFiles.length > 0">
+                <div v-if="isUploading" class="card flex flex-row border-1 border-round-3xl w-shrink surface-border h-full p-2 text-center">
+                  <ProgressSpinner  style="width: 60px; height: 60px"   strokeWidth="6" animationDuration="1.35s" aria-label="Custom ProgressSpinner" />
+                </div>
+
+                <div v-else-if="uploadedFiles.length > 0">
                     <div class="flex flex-wrap w-12 gap-2">
                        <div v-for="(file, index) of uploadedFiles" :key="file.name + file.type + file.size" class="card flex flex-row border-1 border-round-3xl w-shrink surface-border p-2 text-center">
                         <div>
@@ -248,16 +252,17 @@ const onSelectedFiles = async (event) => {
 
 
 
+const isUploading = ref(false);
 
 // Inside the uploadEvent function
 const uploadEvent = async (callback) => {
+    isUploading.value = true; // Indicate that upload has started
     console.log(`Attempting to upload, total size: ${totalSize.value}, percentage: ${totalSizePercent.value}`);
     if (callback && typeof callback === "function") {
         await callback();
-        // Iterate over files.value array and dispatch action for each file
         files.value.forEach(file => {
-          const fileInfo = { file, fileName: file.name, height: undefined }; // Placeholder for height
-          store.dispatch('updateSTLFile', fileInfo);
+            const fileInfo = { file, fileName: file.name, height: undefined }; // Placeholder for height
+            store.dispatch('updateSTLFile', fileInfo);
         });
     } else {
         console.error("Upload callback is not a function", callback);
@@ -266,7 +271,9 @@ const uploadEvent = async (callback) => {
 
 
 
+
 const onTemplatedUpload = () => {
+  isUploading.value = false; // Reset upload status
     toast.add({ severity: "info", summary: "Success", detail: "File Uploaded", life: 3000 });
 };
 
