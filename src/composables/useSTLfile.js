@@ -40,6 +40,7 @@ export function useSTLfile(store, scene) {
         const targetPosition = new THREE.Vector3(0, 27, 10);
         mesh.position.copy(targetPosition);
         mesh.rotation.x = Math.PI / 2;
+        mesh.rotation.z = Math.PI;
 
         mesh.name = 'capac'; // Name the mesh to be recognized by the animation function.
         scene.add(mesh);

@@ -19,9 +19,15 @@
                 <div v-if="files.length > 0">
                     <div class="flex flex-wrap w-12 p-0 my-2 gap-2">
                         <div v-for="(file, index) of files" :key="file.name + file.type + file.size" class="card flex flex-row w-12 border-1 border-round-3xl p-2 surface-border align-items-left gap-2">
-                            <div>
+                          <!-- <div v-for="(file, index) of files" :key="file.name + file.type + file.size" class="card flex flex-row"> -->
+                        <div class="flex align-items-center justify-content-center" style="height: 9rem; width: auto;">
+                            <template v-if="file.previewURL">
                                 <img role="presentation" class="border-round-3xl h-9rem w-auto" :alt="file.name" :src="file.previewURL" />
-                            </div>
+                            </template>
+                            <template v-else>
+                              <ProgressSpinner  style="width: 60px; height: 60px"   strokeWidth="6" animationDuration=".35s" aria-label="Custom ProgressSpinner" />
+                            </template>
+                        </div>
                             <div class="flex flex-column w-8 gap-2 p-2">
                             <span class="font-semibold">{{ file.name }}</span>
                             <div>{{ formatSize(file.size) }}</div>
@@ -108,6 +114,8 @@ import Badge from 'primevue/badge';
 import Knob from 'primevue/knob';
 import InputNumber from 'primevue/inputnumber';
 
+
+import ProgressSpinner from 'primevue/progressspinner';
 
 
 import * as THREE from 'three';
