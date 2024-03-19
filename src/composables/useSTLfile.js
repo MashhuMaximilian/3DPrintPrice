@@ -31,7 +31,7 @@ export function useSTLfile(store, scene) {
         const height = size.y;
         console.log('STL model height:', height);
 
-        store.dispatch('updateSTLHeight', height);
+        store.dispatch('updateSTLFile', height);
 
         const desiredSize = 8;
         const scaleFactor = desiredSize / Math.max(size.x, size.y, size.z);
@@ -43,7 +43,8 @@ export function useSTLfile(store, scene) {
 
         mesh.name = 'capac'; // Name the mesh to be recognized by the animation function.
         scene.add(mesh);
-        store.commit('setSTLUploadCompleted', true);
+        store.dispatch('updateSTLFile', { file: currentMesh, fileName: 'yourFileName.stl', height });
+
         currentMesh = mesh;
 
         console.log(camera); // This should log the camera object or undefined
@@ -56,7 +57,7 @@ export function useSTLfile(store, scene) {
       if (currentMesh) {
         scene.remove(currentMesh);
         currentMesh = null;
-        store.commit('setCurrentSTLFileName', null);
+        store.commit('setCurrentSTLFile', null);
       }
     }
   }

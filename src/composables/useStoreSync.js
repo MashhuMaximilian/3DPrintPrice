@@ -12,7 +12,8 @@ export function useStoreSync(store, { scene, camera, loadSkybox, loadFloor, setH
 
     // Define the watcher for currentSTLFile state changes
     watch(() => store.state.currentSTLFile, async (newFile) => {
-      if (newFile) {
+        if (newFile && typeof newFile === 'object') {
+
         await loadSTLModel(newFile, camera); // Now passing camera as well
       }
     }, { immediate: true });

@@ -207,9 +207,8 @@ const onRemoveTemplatingFile = (file, removeFileCallback, index) => {
   removeFileCallback(index);
 
  if (file.name === store.state.currentSTLFileName) {
-    store.dispatch('removeCurrentMesh');
+    store.dispatch('removeSTLFile');
   }
-  // Dispatch the removeCurrentMesh action to remove the mesh from the scene
 };
 
 const onSelectedFiles = async (event) => {
@@ -229,7 +228,7 @@ const onSelectedFiles = async (event) => {
     } catch (error) {
       console.error('Error generating STL preview:', error);
       // Handle the error, e.g., show an error message or fallback to a default preview image
-      file.previewURL = 'path/to/default/preview.png';
+      file.previewURL = '@/internalAssets/logo.png';
     }
   }
 
@@ -249,7 +248,8 @@ const uploadEvent = async (callback) => {
         await callback();
         // Iterate over files.value array and dispatch action for each file
         files.value.forEach(file => {
-            store.dispatch('updateCurrentSTLFile', file);
+          const fileInfo = { file, fileName: file.name, height: undefined }; // Placeholder for height
+          store.dispatch('updateSTLFile', fileInfo);
         });
     } else {
         console.error("Upload callback is not a function", callback);
@@ -269,7 +269,7 @@ const resetUploadState = (clearCallback) => {
   totalSize.value = 0;
   totalSizePercent.value = 0;
   // Dispatch an action to clear the current mesh
-  store.dispatch('removeCurrentMesh');
+  store.dispatch('removeSTLFile');
 };
 
 const formatSize = (bytes) => {

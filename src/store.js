@@ -32,9 +32,20 @@ const store = createStore({
     },
   },
   mutations: {
-
-    setSTLUploadCompleted(state, value) {
-      state.stlUploadCompleted = value;
+    setCurrentSTLFile(state, { file, fileName }) {
+      state.currentSTLFile = file;
+      state.currentSTLFileName = fileName;
+      state.stlUploadCompleted = !!file;
+    },
+    setSTLHeight(state, height) {
+      state.stlHeight = height;
+    },
+    clearSTL(state) {
+      state.currentSTLFile = null;
+      state.currentSTLFileName = null;
+      state.stlHeight = 0;
+      state.stlUploadCompleted = false;
+      // Potentially clear the STL from the scene here if not handled elsewhere
     },
   
     updateSkybox(state, value) {
@@ -60,24 +71,6 @@ const store = createStore({
       state.floorProperties.floorColor = color;
     },
 
-    setCurrentSTLFile(state, file) {
-      state.currentSTLFile = file;
-    },
-
-    setCurrentSTLFileName(state, fileName) {
-      state.currentSTLFileName = fileName;
-    },
-  
-    clearCurrentSTLFile(state) {
-      if (state.currentSTLFile) {
-        state.scene.remove(state.currentSTLFile);
-        state.currentSTLFile = null;
-      }
-    },
-
-    setSTLHeight(state, height) {
-      state.stlHeight = height;
-    },
 
     setScene(state, newScene) {
       state.scene = newScene; // Make sure you have a `scene` state property if you use this
@@ -87,13 +80,16 @@ const store = createStore({
   },
   actions: {
   
-    updateCurrentSTLFile({ commit }, file) {
-      commit('setCurrentSTLFile', file);
+
+    updateSTLFile({ commit }, { file, fileName, height }) {
+      commit('setCurrentSTLFile', { file, fileName });
+      commit('setSTLHeight', height);
     },
-    removeCurrentMesh({ commit }) {
-      commit('setCurrentSTLFile', null);
-      commit('setCurrentSTLFileName', null);
+    
+    removeSTLFile({ commit }) {
+      commit('clearSTL');
     },
+
     
     updateSphereColor({ commit }, { property, value }) {
       commit('updateSphereProperty', { property, value });
@@ -123,12 +119,8 @@ const store = createStore({
       commit('setHDRIntensity', value);
     },
 
-    updateSTLHeight({ commit }, height) {
-      commit('setSTLHeight', height); // Define a mutation `setSTLHeight` if you want to store the height in your state
-    },
+
   
-
-
   }
 });
 
