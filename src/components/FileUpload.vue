@@ -2,13 +2,13 @@
 <template>
     <div class="card shadow-5 h-full p-4 border-round-3xl vertical-align-middle">
         <Toast />
-        <FileUpload class="w-auto border-round-3xl" name="demo[]" url="/api/upload" @upload="onTemplatedUpload($event)" :multiple="true" accept=".stl" :maxFileSize="150000000" @select="onSelectedFiles">
+        <FileUpload :key="resetKey" class="w-auto border-round-3xl" name="demo[]" url="/api/upload" @upload="onTemplatedUpload($event)" :multiple="true" accept=".stl" :maxFileSize="150000000" @select="onSelectedFiles">
             <template #header="{ chooseCallback, uploadCallback, clearCallback, files }">
                 <div class="flex flex-wrap vertical-align-middle flex-1 gap-2">
                     <div class="flex gap-2">
                         <Button @click="chooseCallback()" icon="pi pi-plus" rounded outlined></Button>
                         <Button class="text-xs" @click="uploadEvent(uploadCallback)" icon="pi pi-upload" rounded outlined severity="success" label="Încarcă" :disabled="!files || files.length === 0"></Button>
-                        <Button @click="resetUploadState(clearCallback)" icon="pi pi-trash" rounded outlined severity="danger" :disabled="totalSizePercent === 0"></Button>
+                        <Button @click="resetUploadState(clearCallback), resetAndClearAll()" icon="pi pi-trash" rounded outlined severity="danger" :disabled="totalSizePercent === 0"></Button>
                     </div>
                     <ProgressBar :value="totalSizePercent" :showValue="true" :class="['md:w-6 h-1rem w-full md:ml-auto', { 'exceeded-progress-bar': totalSizePercent > 100 }]">
                       <p style="font-size: 0.65rem;"> {{ (totalSize / 1048576).toFixed(2) }} MB </p> </ProgressBar>
@@ -59,7 +59,7 @@
                             <div>{{ formatSize(file.size) }}</div>
                             <Badge class="mx-1" value="Completed" severity="success" />
                             <div class="w-12 justify-content-center">
-                            <Button icon="pi pi-times" @click="removeUploadedFileCallback(index)" outlined rounded  severity="danger" ></Button>
+                            <Button icon="pi pi-times" @click="removeUploadedFileCallback(index), resetUploadState(clearCallback)" outlined rounded  severity="danger" ></Button>
                             </div>
                         </div>
                       </div>   
@@ -141,7 +141,14 @@ const store = useStore();
 const quantity = ref(1);
 const height = ref(80);
 // const scene = ref(null); // Make sure you have a reference to your Three.js scene
+const resetKey = ref(0);
 
+function resetAndClearAll() {
+  // Increment the key to force re-render
+  resetKey.value++;
+  
+  // Additional state reset logic here
+}
 
 const generateSTLPreview = (file) => {
   return new Promise((resolve, reject) => {
