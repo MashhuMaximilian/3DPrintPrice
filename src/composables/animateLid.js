@@ -39,7 +39,7 @@ export function useAnimateLid(scene, camera) {
       object: camera,
       property: 'fov',
       targetValue: targetFOV,
-      duration: 500,
+      duration: 1500,
       // onAnimate: () => {
       //   camera.updateProjectionMatrix(); // Important to update the camera projection matrix
       // }

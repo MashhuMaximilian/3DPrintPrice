@@ -41,17 +41,20 @@
                     </div>
                 </div>
 
-                <div v-if="isUploading" class="card flex flex-row border-1 border-round-3xl w-shrink surface-border h-full p-2 text-center">
+                <!-- <div v-if="isUploading" class="card flex flex-row border-1 border-round-3xl w-shrink surface-border h-full p-2 text-center">
                   <ProgressSpinner  style="width: 60px; height: 60px"   strokeWidth="6" animationDuration="1.35s" aria-label="Custom ProgressSpinner" />
                 </div>
+                  Uncomment this and comment the div below at deploy
+               <div v-else-if="uploadedFiles.length > 0"> -->
+                <div v-if="uploadedFiles.length > 0">
 
-                <div v-else-if="uploadedFiles.length > 0">
-                    <div class="flex flex-wrap w-12 gap-2">
-                       <div v-for="(file, index) of uploadedFiles" :key="file.name + file.type + file.size" class="card flex flex-row border-1 border-round-3xl w-shrink surface-border p-2 text-center">
+
+                       <div v-for="(file, index) of uploadedFiles" :key="file.name + file.type + file.size" class="flex border-1 surface-border border-round-3xl flex-grow-1 p-2 gap-4 text-center justify-content-around md:flex-row sm:flex-column">
+                      <div class=" flex flex-row">
                         <div>
-                                <img role="presentation" class="border-round-3xl h-8rem w-auto" :alt="file.name" :src="file.previewURL" />
-                            </div>
-                          <div class="flex flex-column w-12 h-full gap-2 justify-content-center ">
+                            <img role="presentation" class="border-round-3xl h-8rem w-auto" :alt="file.name" :src="file.previewURL" />
+                            </div> 
+                          <div class="flex flex-column flex-grow-0 h-full gap-2 justify-content-center ">
                             <div class="font-semibold w-8rem surface-overlay white-space-nowrap overflow-hidden text-overflow-ellipsis"> {{ file.name }}</div>
                             <div>{{ formatSize(file.size) }}</div>
                             <Badge class="mx-1" value="Completed" severity="success" />
@@ -59,36 +62,39 @@
                             <Button icon="pi pi-times" @click="removeUploadedFileCallback(index)" outlined rounded  severity="danger" ></Button>
                             </div>
                         </div>
-                        </div>
+                      </div>   
+                      
 
-                          <div class="card flex flex-grow-1 flex-column justify-content-start border-1 border-round-3xl surface-border p-2 gap-2">
-                            
-                            <div>
-                              <InputNumber v-model="quantity" inputId="horizontal-buttons" showButtons buttonLayout="horizontal" :step="1" :min="0" suffix=" buc.">
-                              <template #incrementbuttonicon>
-                                  <span class="pi pi-plus" />
-                              </template>
-                              <template #decrementbuttonicon>
-                                  <span class="pi pi-minus" />
-                              </template>
-                          </InputNumber>
-                          </div>
+                         
+                          <div class="flex flex-column gap-3">  
 
-
-                          <div class="flex flex-row">
-                               
                             <div class="knob-container">
-                                <Knob v-model="height" :size="90" :min="0" :max="160"  text-color="var(--primary-color, Black)"  :step="1" :strokeWidth="16"  /> 
+                                <Knob v-model="height" :size="110" :min="0" :max="160"  text-color="var(--primary-color, Black)"  :step="1" :strokeWidth="16"  /> 
                                   <div style="margin-top: -2rem;" class="unit-label text-primary-400 font-semibold text-sm">mm</div>
                             </div>
-                              <div class="flex flex-grow-1 flex-column align-items-center justify-content-center gap-2">
+
+                            <InputNumber v-model="quantity" inputId="horizontal-buttons" showButtons buttonLayout="horizontal" :step="1" :min="0" suffix=" buc.">
+                            <template #incrementbuttonicon>
+                                <span class="pi pi-plus" />
+                            </template>
+                            <template #decrementbuttonicon>
+                                <span class="pi pi-minus" />
+                            </template>
+                            </InputNumber>
+                            </div>
+
+
+                            <div class="flex flex-shrink flex-column align-items-center justify-content-around gap-2">
                               <div>Preț:</div> 
                               <div>12 RON</div>
-                              <Button label="În coș" icon="pi pi-shopping-cart" iconPos="left" severity="success"  />
+                              <Button label="În coș" icon="pi pi-shopping-cart" iconPos="left" severity="secondary"  />
                             </div>
-                            </div>
-                          </div>
-                    </div>
+
+
+                      </div>
+
+                     
+
                 </div>  
 
             </template>
@@ -126,10 +132,15 @@ import * as THREE from 'three';
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader';
 
 import { useStore } from 'vuex';
+
+// import { useSTLfile } from '@/composables/useSTLfile';
+import { useSTLfile } from '@/composables/useSTLfile';
+
 const store = useStore();
 
 const quantity = ref(1);
 const height = ref(80);
+// const scene = ref(null); // Make sure you have a reference to your Three.js scene
 
 
 const generateSTLPreview = (file) => {
@@ -277,14 +288,22 @@ const onTemplatedUpload = () => {
     toast.add({ severity: "info", summary: "Success", detail: "File Uploaded", life: 3000 });
 };
 
+
+const { removeCurrentMesh } = useSTLfile(store);
+const scene = store.state.scene; // Or however you access the scene in your application
+
+
 const resetUploadState = (clearCallback) => {
   if (typeof clearCallback === 'function') {
     clearCallback();
   }
   totalSize.value = 0;
   totalSizePercent.value = 0;
-  // Dispatch an action to clear the current mesh
-  store.dispatch('removeSTLFile');
+
+  // Assuming scene is correctly managed and accessible
+  removeCurrentMesh(scene); // No need to pass scene if it's already accessible within useSTLfile
+
+  console.log("Mesh removal attempted - FileUpload.vue");
 };
 
 const formatSize = (bytes) => {
@@ -302,9 +321,19 @@ const formatSize = (bytes) => {
 </script>
 <style>
 .p-inputnumber-input{
-width: 8rem;
+width: 5rem;
+height: 70%;
 text-align: center;
 }
 
+.p-inputnumber-button-up{
+  width: 1.5rem;
+  height: 70%;
+}
+
+.p-inputnumber-button-down{
+  width: 1.5rem;
+  height: 70%;
+}
 
 </style>

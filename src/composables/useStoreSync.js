@@ -69,5 +69,7 @@ export function useStoreSync(store, { scene, camera, loadSkybox, loadFloor, setH
     }
   }, { immediate: true });
   
-  
+  return {
+    scene, 
+  };
 }  

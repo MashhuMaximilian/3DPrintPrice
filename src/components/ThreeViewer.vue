@@ -1,7 +1,6 @@
-<!-- ThreeViewer.vue  -->
 <template>
   <div ref="container">
-    <canvas class="max-h-29rem border-round-3xl"  ref="canvas"></canvas>
+    <canvas class="max-h-29rem border-round-3xl" ref="canvas"></canvas>
   </div>
 </template>
 
@@ -16,25 +15,21 @@ import { useBackgroundSphere } from '../composables/useBackgroundSphere';
 import { useEnvironmentLoader } from '../composables/useEnvironmentLoader';
 import { useViewerControls } from '../composables/viewerControls';
 import { usePrinterLoader } from '@/composables/usePrinter';
-import { useStoreSync } from '@/composables/useStoreSync'; // Import the new composable
-
-
+import { useStoreSync } from '@/composables/useStoreSync';
 
 const store = useStore();
 const container = ref(null);
 const canvas = ref(null);
-
-let scene, camera;
+const scene = useScene(); // Initialize the scene object
 
 onMounted(() => {
+  
   if (!container.value || !canvas.value) return;
 
-  scene = useScene();
-  store.commit('setScene', scene);
-  camera = useCamera(container.value.clientWidth / container.value.clientHeight);
-  console.log("camera initialized Three.vue", camera)
+  store.commit('setScene', scene); // Use the initialized scene object
+  const camera = useCamera(container.value.clientWidth / container.value.clientHeight);
+  console.log("camera initialized Three.vue", camera);
   const { renderer, resizeRenderer } = useRenderer(canvas.value, container, camera);
-  
 
   useLighting(scene);
 
@@ -43,7 +38,6 @@ onMounted(() => {
   const { setBackgroundSphere, toggleBackgroundSphereVisibility } = useBackgroundSphere(scene.value);
   const { loadSkybox, loadFloor, setHDREnvironment, updateMaterialEnvMapIntensity } = useEnvironmentLoader(scene, renderer);
 
-  // Use the new composable to set up the watchers
   useStoreSync(store, {
     scene,
     camera,
@@ -74,10 +68,10 @@ onMounted(() => {
   }
 
   function animate() {
-  requestAnimationFrame(animate);
-  updateControls();
-  resizeRenderer(); // Call resizeRenderer in the animation loop
-  renderer.render(scene, camera);
+    requestAnimationFrame(animate);
+    updateControls();
+    resizeRenderer(); // Call resizeRenderer in the animation loop
+    renderer.render(scene, camera);
   }
 
   animate();

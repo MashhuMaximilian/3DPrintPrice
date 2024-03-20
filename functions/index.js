@@ -12,6 +12,10 @@ const express = require("express");
 const cors = require("cors");
 
 const app = express();
+const bodyParser = require("body-parser");
+
+// Increase the payload limit for raw types
+app.use(bodyParser.raw({type: "application/octet-stream", limit: "150mb"}));
 
 // Setup CORS with dynamic origin support
 app.use(cors({origin: true}));
@@ -25,7 +29,12 @@ app.post("/upload", (req, res) => {
   // This is where you'd handle the POST request to upload files.
 });
 
-exports.upload = functions.https.onRequest(app);
+// Use runWith to configure memory and timeout for the upload function
+exports.upload = functions.runWith({
+  timeoutSeconds: 300,
+  memory: "1GB",
+}).https.onRequest(app);
+
 
 // Note: You can still define other functions like helloWorld below,
 // just ensure they don't conflict with above

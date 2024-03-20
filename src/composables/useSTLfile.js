@@ -4,10 +4,15 @@ import * as THREE from 'three';
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
 import { useAnimateLid } from './animateLid';
 
-export function useSTLfile(store, scene) {
-  let currentMesh = null;
+export let currentMesh = null;
+
+
+export function useSTLfile(store) {
+  const getScene = () => store.state.scene; // Function to get scene from Vuex
 
   async function loadSTLModel(file, camera) {
+    const scene = getScene(); // Access scene from Vuex
+
     const { animateCapacGroup } = useAnimateLid(scene, camera); // Initialize animateCapacGroup
 
     if (file) {
@@ -63,6 +68,21 @@ export function useSTLfile(store, scene) {
     }
   }
 
+  function removeCurrentMesh() {
+    const scene = getScene(); // Access scene from Vuex
+    // Ensure scene is being passed correctly
+    console.log("Scene before removal attempt:", scene);
+    console.log("Before removal, scene children count:", scene.children.length);
+    if (currentMesh && scene) {
+      scene.remove(currentMesh);
+      currentMesh = null;
+      console.log("Attempting to remove mesh");
+    }
+    console.log("After removal, scene children count:", scene.children.length);
+    store.commit('clearSTL'); // Clear the STL-related state
+  }
+  
 
-  return { loadSTLModel };
+
+  return { loadSTLModel, removeCurrentMesh };
 }
