@@ -14,6 +14,7 @@ const store = createStore({
     scene: null, 
     stlHeight: 0,
     stlUploadCompleted: false,
+    originalModelHeight: 0,
 
     
 
@@ -40,6 +41,11 @@ const store = createStore({
     setSTLHeight(state, height) {
       state.stlHeight = height;
     },
+
+    setOriginalModelHeight(state, height) {
+      state.originalModelHeight = height;
+    },
+    
     clearSTL(state) {
       state.currentSTLFile = null;
       state.currentSTLFileName = null;

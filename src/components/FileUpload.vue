@@ -7,7 +7,7 @@
                 <div class="flex flex-wrap vertical-align-middle flex-1 gap-2">
                     <div class="flex gap-2">
                         <Button @click="chooseCallback()" icon="pi pi-plus" rounded outlined></Button>
-                        <Button class="text-xs" @click="uploadEvent(uploadCallback)" icon="pi pi-upload" rounded outlined severity="success" label="Încarcă" :disabled="!files || files.length === 0"></Button>
+                        <Button class="text-xs" @click="uploadEvent(uploadCallback)" icon="pi pi-money-bill" rounded outlined severity="success" label="Cere cotație" :disabled="!files || files.length === 0"></Button>
                         <Button @click="resetUploadState(clearCallback), resetAndClearAll()" icon="pi pi-trash" rounded outlined severity="danger" :disabled="totalSizePercent === 0"></Button>
                     </div>
                     <ProgressBar :value="totalSizePercent" :showValue="true" :class="['md:w-6 h-1rem w-full md:ml-auto', { 'exceeded-progress-bar': totalSizePercent > 100 }]">
@@ -34,7 +34,7 @@
                             <Badge value="Pending" severity="warning" />
                             <div class="flex gap-2">
                             <Button icon="pi pi-trash" @click="onRemoveTemplatingFile(file, removeFileCallback, index)" outlined rounded  severity="danger" ></Button>
-                            <Button @click="uploadEvent(uploadCallback)" icon="pi pi-upload" rounded outlined severity="success" :disabled="!files || files.length === 0"></Button>
+                            <!-- <Button @click="uploadSingleFile(file)" icon="pi pi-upload" rounded outlined severity="success" :disabled="!files || files.length === 0"></Button> -->
                         </div>
                     </div>
                         </div>
@@ -44,13 +44,13 @@
                 <!-- <div v-if="isUploading" class="card flex flex-row border-1 border-round-3xl w-shrink surface-border h-full p-2 text-center">
                   <ProgressSpinner  style="width: 60px; height: 60px"   strokeWidth="6" animationDuration="1.35s" aria-label="Custom ProgressSpinner" />
                 </div>
-                  Uncomment this and comment the div below at deploy
+Uncomment this and comment the div below at deploy
                <div v-else-if="uploadedFiles.length > 0"> -->
                 <div v-if="uploadedFiles.length > 0">
 
-
                        <div v-for="(file, index) of uploadedFiles" :key="file.name + file.type + file.size" class="flex border-1 surface-border border-round-3xl flex-grow-1 p-2 gap-4 text-center justify-content-around md:flex-row sm:flex-column">
-                      <div class=" flex flex-row">
+                     
+                        <div class=" flex flex-row">
                         <div>
                             <img role="presentation" class="border-round-3xl h-8rem w-auto" :alt="file.name" :src="file.previewURL" />
                             </div> 
@@ -69,7 +69,7 @@
                           <div class="flex flex-column gap-3">  
 
                             <div class="knob-container">
-                                <Knob v-model="height" :size="110" :min="0" :max="160"  text-color="var(--primary-color, Black)"  :step="1" :strokeWidth="16"  /> 
+                                <Knob v-model="height" :size="110" :min="0" :max="160"  text-color="var(--primary-color, Black)"  :step="1" :strokeWidth="16"  @change="updateHeight" /> 
                                   <div style="margin-top: -2rem;" class="unit-label text-primary-400 font-semibold text-sm">mm</div>
                             </div>
 
@@ -138,9 +138,17 @@ import { useSTLfile } from '@/composables/useSTLfile';
 
 const store = useStore();
 
+const { updateSTLScale } = useSTLfile(store);
+
 const quantity = ref(1);
-const height = ref(80);
-// const scene = ref(null); // Make sure you have a reference to your Three.js scene
+const height = ref(store.state.stlHeight.value);
+
+const updateHeight = (value) => {
+  height.value = value;
+  updateSTLScale(value /10);
+  console.log("updateHeight update to: ", value /10);
+};
+
 const resetKey = ref(0);
 
 function resetAndClearAll() {
@@ -271,6 +279,42 @@ const onSelectedFiles = async (event) => {
 
 
 const isUploading = ref(false);
+// const uploadedFiles = ref([]);
+
+// const uploadSingleFile = async (file) => {
+//   isUploading.value = true; // Indicate that upload has started for this file
+  
+//   console.log(`Attempting to upload file: ${file.name}, size: ${file.size}`);
+
+//   // Simulate an upload with a timeout
+//   setTimeout(() => {
+//     // Simulate successful upload by logging to the console
+//     console.log(`Upload successful for file: ${file.name}`);
+    
+//     // Update the application state to reflect the successful upload
+//     // This is also where you would update the server or backend about the upload
+//     const fileInfo = { file, fileName: file.name, uploaded: true }; // Example payload for successful upload
+//     // Assuming `updateSTLFile` is a method to update the store or local state
+//     store.dispatch('updateSTLFile', fileInfo);
+    
+//     // Reset the isUploading flag
+    
+//     isUploading.value = false;
+    
+//     // Find the index of the uploaded file in the "files" array
+//     const index = files.value.findIndex((f) => f.name === file.name);
+//     if (index !== -1) {
+//       // Remove the file from the "files" array
+//       const [uploadedFile] = files.value.splice(index, 1);
+      
+//       // Add the uploaded file to the "uploadedFiles" array
+//       uploadedFiles.value.push(uploadedFile);
+//     }
+    
+//     // Optionally, you might want to trigger any UI updates or notifications here
+//     toast.add({ severity: "success", summary: "Upload Complete", detail: `Successfully uploaded ${file.name}`, life: 3000 });
+//   }, 2000); // Simulated delay for the upload
+// };
 
 // Inside the uploadEvent function
 const uploadEvent = async (callback) => {
@@ -281,7 +325,7 @@ const uploadEvent = async (callback) => {
         files.value.forEach(file => {
             const fileInfo = { file, fileName: file.name, height: undefined }; // Placeholder for height
             store.dispatch('updateSTLFile', fileInfo);
-        });
+        }, 1000); // Simulated upload time);
     } else {
         console.error("Upload callback is not a function", callback);
     }

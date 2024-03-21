@@ -33,12 +33,12 @@ export function useSTLfile(store) {
         const size = new THREE.Vector3();
         box.getSize(size);
 
-        const height = size.y;
-        console.log('STL model height:', height);
-
+        const height = size.y; // Convert to mm
+        store.commit('setOriginalModelHeight', height);
+        console.log('STL model height:', height + ' mm');
         store.dispatch('updateSTLFile', height);
 
-        const desiredSize = 7.5;
+        const desiredSize = store.state.originalModelHeight / 10; // Convert to cm
         const scaleFactor = desiredSize / Math.max(size.x, size.y, size.z);
         mesh.scale.set(scaleFactor, scaleFactor, scaleFactor);
 
@@ -81,8 +81,17 @@ export function useSTLfile(store) {
     console.log("After removal, scene children count:", scene.children.length);
     store.commit('clearSTL'); // Clear the STL-related state
   }
+
+  function updateSTLScale(desiredHeight) {
+    if (currentMesh) {
+      const originalHeight = store.state.originalModelHeight;
+      const scaleFactor = (desiredHeight / 10) / (originalHeight / 10); // Convert to cm
+      currentMesh.scale.set(scaleFactor, scaleFactor, scaleFactor);
+      console.log("updateSTLScale scaleFactor: ", scaleFactor);
+    }
+  }
   
 
 
-  return { loadSTLModel, removeCurrentMesh };
+  return { loadSTLModel, removeCurrentMesh, updateSTLScale };
 }

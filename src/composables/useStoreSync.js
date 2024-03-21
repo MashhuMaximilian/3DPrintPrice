@@ -5,10 +5,11 @@ import { watch } from 'vue';
 
 export function useStoreSync(store, { scene, camera, loadSkybox, loadFloor, setHDREnvironment, setBackgroundSphere, toggleBackgroundSphereVisibility, updateMaterialEnvMapIntensity }) {
     let renderer;
+
     
     const { toggleAssetVisibility} = useEnvironmentLoader(scene, renderer);
     const { loadSTLModel } = useSTLfile(store, scene);
-    
+
 
     // Define the watcher for currentSTLFile state changes
     watch(() => store.state.currentSTLFile, async (newFile) => {
@@ -17,6 +18,10 @@ export function useStoreSync(store, { scene, camera, loadSkybox, loadFloor, setH
         await loadSTLModel(newFile, camera); // Now passing camera as well
       }
     }, { immediate: true });
+
+
+
+    
 
   watch(() => store.state.selectedSkybox, (newSkybox) => {
     loadSkybox(newSkybox);
