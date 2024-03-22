@@ -42,7 +42,7 @@ export function useSTLfile(store) {
         const scaleFactor = desiredSize / Math.max(size.x, size.y, size.z);
         mesh.scale.set(scaleFactor, scaleFactor, scaleFactor);
 
-        const targetPosition = new THREE.Vector3(0, 27, 10);
+        const targetPosition = new THREE.Vector3(0, 32.2, 10);
         mesh.position.copy(targetPosition);
         mesh.rotation.x = Math.PI / 2;
         mesh.rotation.z = Math.PI;

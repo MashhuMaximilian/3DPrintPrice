@@ -32,7 +32,7 @@ export function useAnimateLid(scene, camera) {
         console.error("Camera is undefined in animateCameraZoom");
         return;
     }
-    const targetFOV = 10;
+    const targetFOV = 15;
     console.log("Initial camera FOV:", camera.fov);
 
     animateProperty({
@@ -40,9 +40,6 @@ export function useAnimateLid(scene, camera) {
       property: 'fov',
       targetValue: targetFOV,
       duration: 1000,
-      // onAnimate: () => {
-      //   camera.updateProjectionMatrix(); // Important to update the camera projection matrix
-      // }
     });
   }
 

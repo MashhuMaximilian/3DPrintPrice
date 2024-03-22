@@ -57,7 +57,7 @@ onMounted(() => {
   // Load default printer
   const { loadPrinter } = usePrinterLoader(scene);
   const printerType = 'resinprinters';
-  const printerName = 'CrealityLD002H';
+  const printerName = 'Creality-LD-002H';
   const printerFileName = 'LD002H';
   const textureName = 'Gltf_Import';
 

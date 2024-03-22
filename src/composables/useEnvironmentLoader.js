@@ -118,10 +118,12 @@ async function loadFloor(filename, color) {
       gltf.scene.traverse((child) => {
         if (child.isMesh && child.material) {
           child.material.color.set(color); // Change the material color
+          child.material.side = THREE.FrontSide; // Render the back side (top) of the floor
         }
       });
     }
 
+    
     // Set the floor object to visible and add it to the scene
     gltf.scene.visible = true;
     scene.userData.floor = gltf.scene;

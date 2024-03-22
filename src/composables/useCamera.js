@@ -10,13 +10,8 @@ export function useCamera(aspectRatio) {
   // Set the camera position
   // This places the camera in front of the object, at the object's height,
   // looking slightly down at the object.
-  camera.position.set(2.38, objectCenter.y - 10, 85.65); // Adjust these values as needed
+  camera.position.set(2.38, objectCenter.y - 20, 85.65); // Adjust these values as needed
 
-  // Set the initial lookAt point
-  const lookAtVector = new THREE.Vector3(0, 66, 10);
-
-  // Use the lookAt vector to orient the camera
-  camera.lookAt(lookAtVector);
   // Update the camera's projection matrix
   camera.updateProjectionMatrix();
 
