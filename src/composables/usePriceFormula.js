@@ -5,9 +5,9 @@ export function usePriceFormula() {
     const packagingCost = 1;
     const machineCost = 2;
     const markup = 2;
-    const designAndReviews = 25;
+    const designAndReviews = 15;
     const pricePerLiterOfResin = 120;
-    const supportsMarginError = 0.15;
+    const supportsMarginError = 0.1;
   
     // Function to calculate price
     function calculatePrice(scaledVolumeInMl, quantity) {

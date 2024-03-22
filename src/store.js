@@ -17,6 +17,9 @@ const store = createStore({
     originalModelHeight: 0,
     originalSTLVolume: 0,
 
+
+    printerColorIntensity: 1.8, // Default value
+
     
 
 
@@ -42,6 +45,12 @@ const store = createStore({
     },
   },
   mutations: {
+
+    setPrinterColorIntensity(state, value) {
+      state.printerColorIntensity = value;
+      console.log("printer intensity: " + state.printerColorIntensity )
+    },
+  
     updateSTLMaterialProperty(state, { property, value }) {
       if (property in state.stlMaterialProperties) {
         state.stlMaterialProperties[property] = value;
@@ -104,6 +113,11 @@ const store = createStore({
   
   },
   actions: {
+
+    updatePrinterColorIntensity({ commit }, value) {
+      commit('setPrinterColorIntensity', value);
+    },
+  
     updateSTLMaterialProperty({ commit }, { property, value }) {
       commit('updateSTLMaterialProperty', { property, value });
     },

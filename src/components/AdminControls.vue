@@ -144,6 +144,11 @@
                               <Slider class="w-full p-2 border-round-md" v-model="modelEmissiveIntensity" @change="updateSTLProperty('emissiveIntensity', modelEmissiveIntensity)" :min="0" :max="1" :step="
                         0.01" />
                         </div>
+
+                        <div class="text-right flex flex-row">
+                              <span class="w-4 min-w-0 mr-4 font-medium">Printer Color Intensity</span>
+                              <Slider class="w-full p-2 border-round-md" v-model="printerColorIntensity" @change="updatePrinterColorIntensity" :min="0" :max="10" :step="0.1" />
+                        </div>
                     </div>
             </TabPanel>
 
@@ -198,6 +203,14 @@ import Avatar from 'primevue/avatar';
 
 
 const store = useStore();
+
+const printerColorIntensity = ref(store.state.printerColorIntensity); // Default value
+
+const updatePrinterColorIntensity = (value) => {
+  store.dispatch('updatePrinterColorIntensity', value);
+};
+
+
 const hdrIntensity = computed({
       // Getter returns the current state value
       get: () => store.state.hdrIntensity,

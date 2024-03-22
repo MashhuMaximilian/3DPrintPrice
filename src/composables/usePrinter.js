@@ -5,6 +5,11 @@ import { getDownloadURL, getStorage, ref } from 'firebase/storage';
 
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
+// import { useStore } from 'vuex';
+
+// const store = useStore();
+
+
 export function usePrinterLoader(scene) {
   const storage = getStorage();
 
@@ -49,7 +54,8 @@ export function usePrinterLoader(scene) {
       gltf.scene.scale.set(scaleX, scaleY, scaleZ);
 
 
- 
+      gltf.scene.name = 'PrinterModel'; // This line sets the name
+
       
       scene.add(gltf.scene);
 
@@ -62,7 +68,11 @@ export function usePrinterLoader(scene) {
       
               // Set new emissiveness (example: a slightly tinted white emissive)
               child.material.map = texture;
-              child.material.color.multiplyScalar(1.8); // Multiplies base color by a factor (adjust carefully)
+              // child.material.color.multiplyScalar(1.8); // Multiplies base color by a factor (adjust carefully)
+              child.material.userData.originalColor = child.material.color.clone();
+
+              // child.material.color.multiplyScalar(store.state.printerColorIntensity); // Use the value from the store
+
               child.material.needsUpdate = true;
              
             }
@@ -77,7 +87,21 @@ export function usePrinterLoader(scene) {
       console.error(`Error loading GLTF model: ${error}`);
     });
   }
+  function updatePrinterAppearance(scene, newIntensity) {
+    const printer = scene.getObjectByName('PrinterModel');
+    if (printer) {
+        printer.traverse((child) => {
+            if (child.isMesh && child.material.userData.originalColor) {
+                const originalColor = child.material.userData.originalColor;
+                child.material.color.copy(originalColor);
+                child.material.color.multiplyScalar(newIntensity);
+                child.material.needsUpdate = true;
+            }
+        });
+    }
+}
 
-  return { loadPrinter };
+
+  return { loadPrinter, updatePrinterAppearance };
 }
 

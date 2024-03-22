@@ -55,7 +55,7 @@ onMounted(() => {
   setHDREnvironment(store.state.selectedHDR);
 
   // Load default printer
-  const { loadPrinter } = usePrinterLoader(scene);
+  const { loadPrinter } = usePrinterLoader(scene, store);
   const printerType = 'resinprinters';
   const printerName = 'Creality-LD-002H';
   const printerFileName = 'LD002H';

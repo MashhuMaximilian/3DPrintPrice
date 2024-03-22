@@ -41,16 +41,16 @@
                     </div>
                 </div>
 
-                <!-- <div v-if="isUploading" class="card flex flex-row border-1 border-round-3xl w-shrink surface-border h-full p-2 text-center">
+                <div v-if="isUploading" class="card flex flex-row border-1 border-round-3xl w-shrink surface-border h-full p-2 text-center">
                   <ProgressSpinner  style="width: 60px; height: 60px"   strokeWidth="6" animationDuration="1.35s" aria-label="Custom ProgressSpinner" />
                 </div>
-Uncomment this and comment the div below at deploy
-               <div v-else-if="uploadedFiles.length > 0"> -->
-                <div v-if="uploadedFiles.length > 0">
+<!-- Uncomment this and comment the div below at deploy -->
+               <div v-else-if="uploadedFiles.length > 0">
+                <!-- <div v-if="uploadedFiles.length > 0"> -->
 
                        <div v-for="(file, index) of uploadedFiles" :key="file.name + file.type + file.size" class="flex border-1 surface-border border-round-3xl flex-grow-1 p-2 gap-4 text-center justify-content-around md:flex-row sm:flex-column">
                      
-                        <div class=" flex flex-row">
+                        <div class=" flex flex-row sm:flex-column">
                         <div>
                             <img role="presentation" class="border-round-3xl h-8rem w-auto" :alt="file.name" :src="file.previewURL" />
                             </div> 
@@ -66,7 +66,7 @@ Uncomment this and comment the div below at deploy
                       
 
                          
-                          <div class="flex flex-column gap-3">  
+                          <div class="flex flex-column gap-3 sm:flex-row">  
 
                             <div class="knob-container">
                                 <Knob v-model="height" :size="110" :min="0" :max="160"  text-color="var(--primary-color, Black)"  :step="1" :strokeWidth="16"  @change="updateHeight" /> 
@@ -84,7 +84,7 @@ Uncomment this and comment the div below at deploy
                             </div>
 
 
-                            <div class="flex flex-shrink flex-column align-items-center justify-content-around gap-2">
+                            <div class="flex flex-shrink flex-column align-items-center justify-content-around gap-2 sm:flex-row">
                               <div class="text-secondary-300">Preț:</div> 
                              <div class="flex-row w-12">
                               <div class="text-primary font-semibold text-lg">{{ safePrice(price) }}</div> 

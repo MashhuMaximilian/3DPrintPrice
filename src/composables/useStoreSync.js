@@ -1,5 +1,6 @@
 // src/composables/useStoreSync.js
 import { useEnvironmentLoader } from '../composables/useEnvironmentLoader';
+import { usePrinterLoader } from './usePrinter';
 import { useSTLfile } from '../composables/useSTLfile';
 import { watch } from 'vue';
 
@@ -9,8 +10,8 @@ export function useStoreSync(store, { scene, camera, loadSkybox, loadFloor, setH
     
     const { toggleAssetVisibility} = useEnvironmentLoader(scene, renderer);
     const { loadSTLModel, updateSTLMaterialProperties } = useSTLfile(store, scene);
-
-
+    const {updatePrinterAppearance} = usePrinterLoader(store, scene);
+    
     // Define the watcher for currentSTLFile state changes
     watch(() => store.state.currentSTLFile, async (newFile) => {
         if (newFile && typeof newFile === 'object') {
@@ -19,7 +20,14 @@ export function useStoreSync(store, { scene, camera, loadSkybox, loadFloor, setH
       }
     }, { immediate: true });
 
+    watch(() => store.state.printerColorIntensity, (newIntensity) => {
+      console.log('Printer color intensity changed:', newIntensity);
+      // Perform any action you need when printerColorIntensity changes
+      // For example, if you have a function to update the printer's appearance based on intensity:
+      updatePrinterAppearance(scene, newIntensity);
+  }, { immediate: true });
 
+  
   watch(() => store.state.stlMaterialProperties, (newProperties) => {
     updateSTLMaterialProperties(newProperties);
   }, { deep: true, immediate: true });
