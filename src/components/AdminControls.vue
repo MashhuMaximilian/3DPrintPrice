@@ -99,10 +99,52 @@
                         <span class="font-bold white-space-nowrap">Model Settings</span>
                     </div>
                 </template>
-                <p class="m-0">
-                    Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim
-                    ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius modi.
-                </p>
+                <div class="md:w-6 text-right flex flex-column w-6 justify-content-left justify-content-between gap-3 px-4  sm:flex w-12 gap-3 my-3"  >
+                            <!-- <div class="text-right flex flex-row">
+                              <span class="w-4 min-w-0 mr-4 font-medium">Model Color</span>
+                              <ColorPicker v-model="modelColor" @change="updateSTLProperty('color', modelColor)" />
+                            </div> -->
+
+                            <div class="flex flex-row justify-content-start">
+                                  <div class="w-full">
+                                <IconField iconPosition="left"> <InputIcon class="pi pi-palette px-1"> </InputIcon>
+                                  <InputText class="w-12" id="emissive" v-model="modelColor" @input="() =>updateSTLProperty('color', modelColor)" modelColor="Enter model color" /></IconField>
+                                </div>
+                                <div class="w-11 p-2 justify-content-end">
+                                  <ColorPicker v-model="modelColor" @change="updateSTLProperty('color', modelColor)" />
+                                  <span class="w-12 font-medium mx-2">Model Color</span> 
+                                </div>
+                            </div>
+                            <!-- <div class="text-right flex flex-row">
+                              <span class="w-4 min-w-0 mr-4 font-medium">Model Color</span>
+                              <ColorPicker v-model="modelemissiveColor" @change="updateSTLProperty('emissiveColor', emissiveColor)" />
+                            </div> -->
+
+                            <div class="flex flex-row justify-content-start">
+                                  <div class="w-full">
+                                <IconField iconPosition="left"> <InputIcon class="pi pi-palette px-1"> </InputIcon>
+                                  <InputText class="w-12" id="emissive" v-model="modelemissiveColor" @input="() =>updateSTLProperty('emissiveColor', modelemissiveColor)" modelemissiveColor="Enter model glow" /></IconField>
+                                </div>
+                                <div class="w-11 p-2 justify-content-end">
+                                  <ColorPicker v-model="modelemissiveColor" @change="updateSTLProperty('emissiveColor', modelemissiveColor)" />
+                                  <span class="w-12 font-medium mx-2">Model Glow</span> 
+                                </div>
+                            </div>
+
+                            <div class="text-right flex flex-row " >
+                              <span class="w-4 min-w-0 mr-4 font-medium">Model Metalness</span>
+                              <Slider class="w-full p-2 border-round-md" v-model="modelMetalness" @change="updateSTLProperty('metalness', modelMetalness)" :min="0" :max="1" :step="0.01" />
+                            </div>
+                            <div class="text-right flex flex-row">
+                              <span class="w-4 min-w-0 mr-4 font-medium">Model Roughness</span>
+                              <Slider class="w-full p-2 border-round-md" v-model="modelRoughness" @change="updateSTLProperty('roughness', modelRoughness)" :min="0" :max="1" :step="0.01" />
+                            </div>
+                            <div class="text-right flex flex-row">
+                              <span class="w-4 min-w-0 mr-4 font-medium">Model Glow</span>
+                              <Slider class="w-full p-2 border-round-md" v-model="modelEmissiveIntensity" @change="updateSTLProperty('emissiveIntensity', modelEmissiveIntensity)" :min="0" :max="1" :step="
+                        0.01" />
+                        </div>
+                    </div>
             </TabPanel>
 
             <TabPanel>
@@ -248,8 +290,22 @@ const skyboxOptions = computed(() => ['No Skybox', ...skyboxes.value]);
 const floorOptions = computed(() => ['No Floor', ...floors.value]);
 const hdrOptions = computed(() => ['No HDR', ...hdrs.value]);
 
-// Define update functions that dispatch actions to the store
 
+const modelColor = ref(store.state.stlMaterialProperties.color); // Default metalness
+const modelMetalness = ref(store.state.stlMaterialProperties.metalness); // Default metalness
+const modelRoughness = ref(store.state.stlMaterialProperties.roughness);  // Default roughness
+const modelemissiveColor = ref(store.state.stlMaterialProperties.emissiveColor);  // Default emissive intensity
+const modelEmissiveIntensity = ref(store.state.stlMaterialProperties.emissiveIntensity);  // Default emissive intensity
+
+
+const updateSTLProperty = (property, value) => {
+  console.log(`Updating ${property} to ${value}`);
+  // Dispatch the action to update the STL material property
+  store.dispatch('updateSTLMaterialProperty', {
+    property,
+    value: property === 'color' || property === 'emissiveColor' ? `#${value}` : value,
+  });
+};
 
 </script>
 

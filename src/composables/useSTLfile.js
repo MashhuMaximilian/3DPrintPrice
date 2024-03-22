@@ -23,7 +23,16 @@ export function useSTLfile(store) {
       reader.onload = async (event) => {
         const contents = event.target.result;
         const geometry = loader.parse(contents);
-        const material = new THREE.MeshStandardMaterial();
+
+
+        const material = new THREE.MeshStandardMaterial({
+          color: store.state.stlMaterialProperties.color,
+          metalness: store.state.stlMaterialProperties.metalness,
+          roughness: store.state.stlMaterialProperties.roughness,
+          emissive: store.state.stlMaterialProperties.emissiveColor,
+          emissiveIntensity: store.state.stlMaterialProperties.emissiveIntensity,
+        });
+    
         const mesh = new THREE.Mesh(geometry, material);
 
         if (currentMesh) {
@@ -91,6 +100,22 @@ export function useSTLfile(store) {
     store.commit('clearSTL'); // Clear the STL-related state
   }
 
+  function updateSTLMaterialProperties(properties) {
+    if (currentMesh) {
+      const color = properties.color.startsWith('#') ? properties.color : `#${properties.color}`;
+      currentMesh.material.color.set(color);
+  
+      // Format the emissive color value
+      const emissiveColor = properties.emissiveColor.startsWith('#') ? properties.emissiveColor : `#${properties.emissiveColor}`;
+      currentMesh.material.emissive.set(emissiveColor);
+  
+      currentMesh.material.metalness = properties.metalness;
+      currentMesh.material.roughness = properties.roughness;
+      currentMesh.material.emissiveIntensity = properties.emissiveIntensity;
+      currentMesh.material.needsUpdate = true;
+    }
+  }
+
   function updateSTLScale(desiredHeight) {
     if (currentMesh) {
       // Log the updated height
@@ -110,5 +135,5 @@ export function useSTLfile(store) {
 }
 
 
-  return { loadSTLModel, removeCurrentMesh, updateSTLScale };
+  return { loadSTLModel, removeCurrentMesh, updateSTLScale, updateSTLMaterialProperties };
 }

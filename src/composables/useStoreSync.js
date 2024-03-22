@@ -8,7 +8,7 @@ export function useStoreSync(store, { scene, camera, loadSkybox, loadFloor, setH
 
     
     const { toggleAssetVisibility} = useEnvironmentLoader(scene, renderer);
-    const { loadSTLModel } = useSTLfile(store, scene);
+    const { loadSTLModel, updateSTLMaterialProperties } = useSTLfile(store, scene);
 
 
     // Define the watcher for currentSTLFile state changes
@@ -20,7 +20,9 @@ export function useStoreSync(store, { scene, camera, loadSkybox, loadFloor, setH
     }, { immediate: true });
 
 
-
+  watch(() => store.state.stlMaterialProperties, (newProperties) => {
+    updateSTLMaterialProperties(newProperties);
+  }, { deep: true, immediate: true });
     
 
   watch(() => store.state.selectedSkybox, (newSkybox) => {

@@ -32,8 +32,22 @@ const store = createStore({
       opacity: 0.8,
       emissiveColor: '#ffffff'
     },
+
+    stlMaterialProperties: {
+      color: '#f7d734', // Default color
+      metalness: 1,
+      roughness: 0.2,
+      emissiveIntensity: 0,
+      emissiveColor: '#ffffff'
+    },
   },
   mutations: {
+    updateSTLMaterialProperty(state, { property, value }) {
+      if (property in state.stlMaterialProperties) {
+        state.stlMaterialProperties[property] = value;
+      }
+    },
+    
     setCurrentSTLFile(state, { file, fileName }) {
       state.currentSTLFile = file;
       state.currentSTLFileName = fileName;
@@ -90,6 +104,9 @@ const store = createStore({
   
   },
   actions: {
+    updateSTLMaterialProperty({ commit }, { property, value }) {
+      commit('updateSTLMaterialProperty', { property, value });
+    },
   
     updateSTLVolume({ commit }, volumeInMl) {
       commit('setOriginalSTLVolume', volumeInMl);
