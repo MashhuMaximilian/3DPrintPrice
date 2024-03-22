@@ -134,6 +134,7 @@ export function useSTLfile(store) {
     }
 }
 
-
+//TODO: Add a function either here or in usePrinter.js to add a bounding box as big as the print volume that is 130 mm x 82 mm x 160 mm.
+// I guess it starts from (0, 32.2, 10); downwards. I know 32.2 is the good value, not sure about the other.
   return { loadSTLModel, removeCurrentMesh, updateSTLScale, updateSTLMaterialProperties };
 }

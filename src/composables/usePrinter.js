@@ -87,6 +87,8 @@ export function usePrinterLoader(scene) {
       console.error(`Error loading GLTF model: ${error}`);
     });
   }
+
+
   function updatePrinterAppearance(scene, newIntensity) {
     const printer = scene.getObjectByName('PrinterModel');
     if (printer) {
@@ -100,7 +102,6 @@ export function usePrinterLoader(scene) {
         });
     }
 }
-
 
   return { loadPrinter, updatePrinterAppearance };
 }

@@ -16,6 +16,7 @@
             </template>
 
             <template #content="{ files, uploadedFiles, removeUploadedFileCallback, removeFileCallback }">
+              <!-- TODO: Make a toast for limiting the size. Gives a tost if you try to upload something abovr 150MB and does not let you-->
                 <div v-if="files.length > 0">
                     <div class="flex flex-wrap w-12 p-0 my-2 gap-2">
                         <div v-for="(file, index) of files" :key="file.name + file.type + file.size" class="card flex flex-row w-12 border-1 border-round-3xl p-2 surface-border align-items-left gap-2">
@@ -312,7 +313,8 @@ const onSelectedFiles = async (event) => {
 
 
 const isUploading = ref(false);
-//TODO: Make this work. Upload just one file in the viewer.
+
+//TODO: Make this work. Upload just one file in the viewer and get its price.
 // const uploadedFiles = ref([]);
 
 // const uploadSingleFile = async (file) => {

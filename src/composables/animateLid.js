@@ -53,7 +53,7 @@ export function useAnimateLid(scene, camera) {
     const capacGroup = scene.getObjectByName('capac');
     if (capacGroup) {
       animateCameraZoom(camera); // Trigger camera zoom animation first
-  
+  //TODO: make this animation also flip the lid and put it befind the printer
       animateProperty({
         object: capacGroup.position,
         property: 'y',
