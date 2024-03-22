@@ -163,10 +163,12 @@ const { calculatePrice } = usePriceFormula();
 const quantity = ref(1);
 
 const price = computed(() => {
-  const scaledVolume = store.state.originalSTLVolume; // This should be the scaled volume, not the original
-  const quantityValue = quantity.value;
-  return calculatePrice(scaledVolume, quantityValue); // Pass the scaled volume
+    // This will now react to changes in `store.state.originalSTLVolume`
+    const scaledVolume = store.state.originalSTLVolume;
+    const quantityValue = quantity.value;
+    return calculatePrice(scaledVolume, quantityValue);
 });
+
 
 function safePrice(price) {
   return computed(() => (price || 0).toFixed(2)).value;

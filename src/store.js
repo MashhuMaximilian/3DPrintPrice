@@ -93,7 +93,6 @@ const store = createStore({
   
     updateSTLVolume({ commit }, volumeInMl) {
       commit('setOriginalSTLVolume', volumeInMl);
-      // You may want to log here to ensure this action is called
       console.log('Updated volume in store:', volumeInMl);
     },
     

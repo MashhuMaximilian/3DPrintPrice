@@ -3,6 +3,7 @@ import * as THREE from 'three';
 
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
 import { useAnimateLid } from './animateLid';
+import { useVolumeCalculator } from './useVolumeCalculator'; // Adjust the path as necessary
 
 export let currentMesh = null;
 
@@ -33,7 +34,7 @@ export function useSTLfile(store) {
         const size = new THREE.Vector3();
         box.getSize(size);
 
-        const height = size.y; // Convert to mm
+        const height = size.z; // Convert to mm
         store.commit('setOriginalModelHeight', height);
         // console.log('STL model height:', height + ' mm');
         console.log('width:'+ size.x.toFixed(2) + ' mm', 'depth:' + size.y.toFixed(2) + ' mm', 'height:' + size.z.toFixed(2) + ' mm');
@@ -42,48 +43,7 @@ export function useSTLfile(store) {
 
         const desiredSize = store.state.originalModelHeight * 0.1; // Convert to cm
         const scaleFactor = desiredSize / Math.max(size.x, size.y, size.z);
-        mesh.scale.set(scaleFactor, scaleFactor, scaleFactor);
-
-
-            // Example volume calculation function (this is a simplification)
-            function calculateVolume(mesh) {
-              const geometry = mesh.geometry;
-            
-              // Ensure the geometry is merged and not indexed for simplicity
-              if (!geometry.isBufferGeometry || geometry.index !== null) {
-                console.error('Geometry is not in non-indexed BufferGeometry form');
-                return 0;
-              }
-            
-              const positionAttribute = geometry.getAttribute('position');
-              if (positionAttribute === undefined) {
-                console.error('Position attribute not found in geometry');
-                return 0;
-              }
-            
-              let volume = 0;
-              const p1 = new THREE.Vector3();
-              const p2 = new THREE.Vector3();
-              const p3 = new THREE.Vector3();
-            
-              // Split the geometry into triangles and sum their volumes
-              for (let i = 0; i < positionAttribute.count; i += 3) {
-                p1.fromBufferAttribute(positionAttribute, i);
-                p2.fromBufferAttribute(positionAttribute, i + 1);
-                p3.fromBufferAttribute(positionAttribute, i + 2);
-            
-                // Compute the volume of the parallelepiped
-                volume += p1.dot(p2.cross(p3)) / 6;
-              }
-            
-              return Math.abs(volume); // Return the absolute value of the total volume
-            }
-            
-            
-            const volumeInml = calculateVolume(mesh) / 1000;
-            store.dispatch('updateSTLVolume', volumeInml);
-            console.log('STL model volume:', volumeInml + ' mL');
-            
+        mesh.scale.set(scaleFactor, scaleFactor, scaleFactor);            
         const targetPosition = new THREE.Vector3(0, 32.2, 10);
         mesh.position.copy(targetPosition);
         mesh.rotation.x = Math.PI / 2;
@@ -92,6 +52,13 @@ export function useSTLfile(store) {
         mesh.name = 'capac'; // Name the mesh to be recognized by the animation function.
         scene.add(mesh);
         store.dispatch('updateSTLFile', { file: currentMesh, fileName: 'yourFileName.stl', height });
+
+
+        const { calculateVolume } = useVolumeCalculator();
+        const initialVolume = calculateVolume(mesh)/1000; // Calculate initial volume
+        console.log('Initial STL model volume:', initialVolume + ' mL'); // Log initial volume
+        // Proceed to dispatch this volume or further use it as needed
+        store.dispatch('updateSTLVolume', initialVolume);
 
         currentMesh = mesh;
 
@@ -126,14 +93,21 @@ export function useSTLfile(store) {
 
   function updateSTLScale(desiredHeight) {
     if (currentMesh) {
+      // Log the updated height
+      console.log("Updated height:", desiredHeight + " mm");
+
       const originalHeight = store.state.originalModelHeight * 10;
       const scaleFactor = desiredHeight / originalHeight;
       currentMesh.scale.set(scaleFactor, scaleFactor, scaleFactor);
       console.log("updateSTLScale scaleFactor: ", scaleFactor);
+  
+      const { calculateVolume } = useVolumeCalculator();
+      const newVolume = calculateVolume(currentMesh) * Math.pow(scaleFactor, 3);
+      console.log("New volume after height change:", newVolume + " mL");
+  
+      store.dispatch('updateSTLVolume', newVolume);
     }
-  }
-  
-  
+}
 
 
   return { loadSTLModel, removeCurrentMesh, updateSTLScale };
