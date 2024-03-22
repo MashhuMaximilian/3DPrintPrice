@@ -86,7 +86,7 @@ Uncomment this and comment the div below at deploy
 
                             <div class="flex flex-shrink flex-column align-items-center justify-content-around gap-2">
                               <div>Preț:</div> 
-                              <div>12 RON</div>
+                              <div>{{ safePrice(price) }} RON</div>
                               <Button label="În coș" icon="pi pi-shopping-cart" iconPos="left" severity="secondary"  />
                             </div>
 
@@ -113,7 +113,7 @@ Uncomment this and comment the div below at deploy
 
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { usePrimeVue } from 'primevue/config';
 import { useToast } from "primevue/usetoast";
 import FileUpload from 'primevue/fileupload';
@@ -133,20 +133,21 @@ import { STLLoader } from 'three/examples/jsm/loaders/STLLoader';
 
 import { useStore } from 'vuex';
 
-// import { useSTLfile } from '@/composables/useSTLfile';
+
 import { useSTLfile } from '@/composables/useSTLfile';
+import { usePriceFormula } from '@/composables/usePriceFormula';
+
 
 const store = useStore();
 
 const { updateSTLScale } = useSTLfile(store);
 
-const quantity = ref(1);
 const height = ref(store.state.stlHeight.value);
 
 const updateHeight = (value) => {
   height.value = value;
-  updateSTLScale(value /10);
-  console.log("updateHeight update to: ", value /10);
+  updateSTLScale(value); // Ensure 'value' is in millimeters, not centimeters or other units
+  console.log("updateHeight updated to: ", value);
 };
 
 const resetKey = ref(0);
@@ -156,6 +157,19 @@ function resetAndClearAll() {
   resetKey.value++;
   
   // Additional state reset logic here
+}
+
+const { calculatePrice } = usePriceFormula();
+const quantity = ref(1);
+
+const price = computed(() => {
+  const scaledVolume = store.state.originalSTLVolume; // This should be the scaled volume, not the original
+  const quantityValue = quantity.value;
+  return calculatePrice(scaledVolume, quantityValue); // Pass the scaled volume
+});
+
+function safePrice(price) {
+  return computed(() => (price || 0).toFixed(2)).value;
 }
 
 const generateSTLPreview = (file) => {
@@ -279,6 +293,7 @@ const onSelectedFiles = async (event) => {
 
 
 const isUploading = ref(false);
+//TODO: Make this work. Upload just one file in the viewer.
 // const uploadedFiles = ref([]);
 
 // const uploadSingleFile = async (file) => {

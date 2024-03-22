@@ -15,6 +15,7 @@ const store = createStore({
     stlHeight: 0,
     stlUploadCompleted: false,
     originalModelHeight: 0,
+    originalSTLVolume: 0,
 
     
 
@@ -44,6 +45,10 @@ const store = createStore({
 
     setOriginalModelHeight(state, height) {
       state.originalModelHeight = height;
+    },
+
+    setOriginalSTLVolume(state, volume) {
+      state.originalSTLVolume = volume;
     },
     
     clearSTL(state) {
@@ -86,7 +91,12 @@ const store = createStore({
   },
   actions: {
   
-
+    updateSTLVolume({ commit }, volumeInMl) {
+      commit('setOriginalSTLVolume', volumeInMl);
+      // You may want to log here to ensure this action is called
+      console.log('Updated volume in store:', volumeInMl);
+    },
+    
     updateSTLFile({ commit }, { file, fileName, height }) {
       commit('setCurrentSTLFile', { file, fileName });
       commit('setSTLHeight', height);

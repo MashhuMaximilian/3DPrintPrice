@@ -35,13 +35,55 @@ export function useSTLfile(store) {
 
         const height = size.y; // Convert to mm
         store.commit('setOriginalModelHeight', height);
-        console.log('STL model height:', height + ' mm');
+        // console.log('STL model height:', height + ' mm');
+        console.log('width:'+ size.x.toFixed(2) + ' mm', 'depth:' + size.y.toFixed(2) + ' mm', 'height:' + size.z.toFixed(2) + ' mm');
+
         store.dispatch('updateSTLFile', height);
 
-        const desiredSize = store.state.originalModelHeight / 10; // Convert to cm
+        const desiredSize = store.state.originalModelHeight * 0.1; // Convert to cm
         const scaleFactor = desiredSize / Math.max(size.x, size.y, size.z);
         mesh.scale.set(scaleFactor, scaleFactor, scaleFactor);
 
+
+            // Example volume calculation function (this is a simplification)
+            function calculateVolume(mesh) {
+              const geometry = mesh.geometry;
+            
+              // Ensure the geometry is merged and not indexed for simplicity
+              if (!geometry.isBufferGeometry || geometry.index !== null) {
+                console.error('Geometry is not in non-indexed BufferGeometry form');
+                return 0;
+              }
+            
+              const positionAttribute = geometry.getAttribute('position');
+              if (positionAttribute === undefined) {
+                console.error('Position attribute not found in geometry');
+                return 0;
+              }
+            
+              let volume = 0;
+              const p1 = new THREE.Vector3();
+              const p2 = new THREE.Vector3();
+              const p3 = new THREE.Vector3();
+            
+              // Split the geometry into triangles and sum their volumes
+              for (let i = 0; i < positionAttribute.count; i += 3) {
+                p1.fromBufferAttribute(positionAttribute, i);
+                p2.fromBufferAttribute(positionAttribute, i + 1);
+                p3.fromBufferAttribute(positionAttribute, i + 2);
+            
+                // Compute the volume of the parallelepiped
+                volume += p1.dot(p2.cross(p3)) / 6;
+              }
+            
+              return Math.abs(volume); // Return the absolute value of the total volume
+            }
+            
+            
+            const volumeInml = calculateVolume(mesh) / 1000;
+            store.dispatch('updateSTLVolume', volumeInml);
+            console.log('STL model volume:', volumeInml + ' mL');
+            
         const targetPosition = new THREE.Vector3(0, 32.2, 10);
         mesh.position.copy(targetPosition);
         mesh.rotation.x = Math.PI / 2;
@@ -84,12 +126,13 @@ export function useSTLfile(store) {
 
   function updateSTLScale(desiredHeight) {
     if (currentMesh) {
-      const originalHeight = store.state.originalModelHeight;
-      const scaleFactor = (desiredHeight / 10) / (originalHeight / 10); // Convert to cm
+      const originalHeight = store.state.originalModelHeight * 10;
+      const scaleFactor = desiredHeight / originalHeight;
       currentMesh.scale.set(scaleFactor, scaleFactor, scaleFactor);
       console.log("updateSTLScale scaleFactor: ", scaleFactor);
     }
   }
+  
   
 
 
