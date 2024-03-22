@@ -42,16 +42,16 @@
                     </div>
                 </div>
 
-                <div v-if="isUploading" class="card flex flex-row border-1 border-round-3xl w-shrink surface-border h-full p-2 text-center">
+                <!-- <div v-if="isUploading" class="card flex flex-row border-1 border-round-3xl w-shrink surface-border h-full p-2 text-center">
                   <ProgressSpinner  style="width: 60px; height: 60px"   strokeWidth="6" animationDuration="1.35s" aria-label="Custom ProgressSpinner" />
-                </div>
+                </div> -->
 <!-- Uncomment this and comment the div below at deploy -->
-               <div v-else-if="uploadedFiles.length > 0">
-                <!-- <div v-if="uploadedFiles.length > 0"> -->
+               <!-- <div v-else-if="uploadedFiles.length > 0"> -->
+                <div v-if="uploadedFiles.length > 0">
 
-                       <div v-for="(file, index) of uploadedFiles" :key="file.name + file.type + file.size" class="flex border-1 surface-border border-round-3xl flex-grow-1 p-2 gap-4 text-center justify-content-around md:flex-row sm:flex-column">
+                       <div v-for="(file, index) of uploadedFiles" :key="file.name + file.type + file.size" class="flex border-1 surface-border border-round-3xl md:flex-grow-1 p-2 gap-4 text-center justify-content-around md:flex-row sm:flex-column">
                      
-                        <div class=" flex flex-row sm:flex-column">
+                        <div class=" flex md:flex-row sm:flex-column">
                         <div>
                             <img role="presentation" class="border-round-3xl h-8rem w-auto" :alt="file.name" :src="file.previewURL" />
                             </div> 
@@ -67,7 +67,7 @@
                       
 
                          
-                          <div class="flex flex-column gap-3 sm:flex-row">  
+                          <div class="flex md:flex-column gap-3 sm:flex-row">  
 
                             <div class="knob-container">
                                 <Knob v-model="height" :size="110" :min="0" :max="160"  text-color="var(--primary-color, Black)"  :step="1" :strokeWidth="16"  @change="updateHeight" /> 
@@ -85,7 +85,7 @@
                             </div>
 
 
-                            <div class="flex flex-shrink flex-column align-items-center justify-content-around gap-2 sm:flex-row">
+                            <div class="flex flex-shrink md:flex-column align-items-center justify-content-around gap-2 sm:flex-row">
                               <div class="text-secondary-300">Preț:</div> 
                              <div class="flex-row w-12">
                               <div class="text-primary font-semibold text-lg">{{ safePrice(price) }}</div> 
@@ -204,23 +204,23 @@ const generateSTLPreview = (file) => {
 
       const loader = new STLLoader();
       const geometry = loader.parse(contents);
-      const material = new THREE.MeshStandardMaterial({ color: 0xA27CF8 });
+      const material = new THREE.MeshStandardMaterial({ color: 0xf7d734, metalness: 1, roughness: 0.2 });
       const mesh = new THREE.Mesh(geometry, material);
       scene.add(mesh);
             //lighting
-            const ambientLight = new THREE.AmbientLight(0xcccccc, 0.4); // Adjust color and intensity
+            const ambientLight = new THREE.AmbientLight(0xcccccc, 0.8); // Adjust color and intensity
 
             // Directional Light (Sunlight)
             const directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
             directionalLight.position.set(-50, 200, 100); // Adjust position
 
             // Fill Light (Soft light)
-            const fillLight = new THREE.DirectionalLight(0xdddddd, 1.7);
+            const fillLight = new THREE.DirectionalLight(0xdddddd, 3.7);
             fillLight.position.set(50, 50, 30); // Adjust position
 
             // Rim Light (Subtle highlight)
             const rimLight = new THREE.SpotLight(0xffffff, 0.3, 0, Math.PI / 4, 1);
-            rimLight.position.set(0, 100, -100); // Adjust position
+            rimLight.position.set(0, 10, -10); // Adjust position
 
             // Add lights to the scene
             scene.add(ambientLight, directionalLight, fillLight, rimLight);
