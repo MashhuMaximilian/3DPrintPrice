@@ -85,9 +85,12 @@ Uncomment this and comment the div below at deploy
 
 
                             <div class="flex flex-shrink flex-column align-items-center justify-content-around gap-2">
-                              <div>Preț:</div> 
-                              <div>{{ safePrice(price) }} RON</div>
-                              <Button label="În coș" icon="pi pi-shopping-cart" iconPos="left" severity="secondary"  />
+                              <div class="text-secondary-300">Preț:</div> 
+                             <div class="flex-row w-12">
+                              <div class="text-primary font-semibold text-lg">{{ safePrice(price) }}</div> 
+                              <div class="flex-shrin text-primary-300 font-medium text-sm mt-1"> RON</div>
+                            </div>
+                               <Button label="În coș" icon="pi pi-shopping-cart" iconPos="left" severity="secondary"  />
                             </div>
 
 
@@ -113,7 +116,7 @@ Uncomment this and comment the div below at deploy
 
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { usePrimeVue } from 'primevue/config';
 import { useToast } from "primevue/usetoast";
 import FileUpload from 'primevue/fileupload';
@@ -142,12 +145,26 @@ const store = useStore();
 
 const { updateSTLScale } = useSTLfile(store);
 
-const height = ref(store.state.stlHeight.value);
+const height = ref(store.state.originalModelHeight);
+
+
+watch(() => store.state.originalModelHeight, (newHeight) => {
+  // Use Math.round to round the height to the nearest whole number
+  height.value = Math.round(newHeight);
+}, { immediate: true });
+
+
 
 const updateHeight = (value) => {
-  height.value = value;
-  updateSTLScale(value); // Ensure 'value' is in millimeters, not centimeters or other units
-  console.log("updateHeight updated to: ", value);
+  // Round the value to no decimal places before updating height and sending to store
+  const roundedValue = Math.round(value);
+  height.value = roundedValue; // Update the local state with the rounded value
+  updateSTLScale(roundedValue); // Pass the rounded value to your scaling function
+  
+  // If needed, dispatch the rounded value to your Vuex store as well
+  store.dispatch('updateHeight', roundedValue);
+  
+  console.log("updateHeight updated to: ", roundedValue);
 };
 
 const resetKey = ref(0);
