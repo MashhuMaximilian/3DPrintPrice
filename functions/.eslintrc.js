@@ -15,6 +15,8 @@ module.exports = {
     "prefer-arrow-callback": "error",
     "quotes": ["error", "double", {"allowTemplateLiterals": true}],
     "no-unused-vars": "warn", // or 'off' to disable completely
+    "new-cap": ["error", {capIsNewExceptions: ["jszip"]}],
+
   },
   ignorePatterns: ["dist/**"],
 

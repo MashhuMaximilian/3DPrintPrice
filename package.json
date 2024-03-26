@@ -8,11 +8,14 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "axios": "^1.6.8",
     "body-parser": "^1.20.2",
     "core-js": "^3.8.3",
     "cors": "^2.8.5",
     "express": "^4.18.3",
     "firebase": "^10.8.1",
+    "gltf-pipeline": "^4.1.0",
+    "jszip": "^3.10.1",
     "primeflex": "^3.3.1",
     "primeicons": "^6.0.1",
     "primeng": "^17.9.0",

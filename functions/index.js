@@ -35,6 +35,15 @@ exports.upload = functions.runWith({
   memory: "1GB",
 }).https.onRequest(app);
 
+// index.js
+const optimizeAsset = require("./optimizeAsset");
+const bundleAssets = require("./bundleAssets");
+const streamAssetChunk = require("./streamAssetChunk");
+
+exports.optimizeAsset = optimizeAsset.optimizeAsset;
+exports.bundleAssets = bundleAssets.bundleAssets;
+exports.streamAssetChunk = streamAssetChunk.streamAssetChunk;
+
 
 // Note: You can still define other functions like helloWorld below,
 // just ensure they don't conflict with above

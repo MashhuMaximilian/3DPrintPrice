@@ -42,12 +42,12 @@
                     </div>
                 </div>
 
-                <!-- <div v-if="isUploading" class="card flex flex-row border-1 border-round-3xl w-shrink surface-border h-full p-2 text-center">
+                <div v-if="isUploading" class="card flex flex-row border-1 border-round-3xl w-shrink surface-border h-full p-2 text-center">
                   <ProgressSpinner  style="width: 60px; height: 60px"   strokeWidth="6" animationDuration="1.35s" aria-label="Custom ProgressSpinner" />
-                </div> -->
-<!-- Uncomment this and comment the div below at deploy -->
-               <!-- <div v-else-if="uploadedFiles.length > 0"> -->
-                <div v-if="uploadedFiles.length > 0">
+                </div>
+<!-- Uncomment this and comment the div v-else-if below at deploy -->
+               <div v-else-if="uploadedFiles.length > 0">
+                <!-- <div v-if="uploadedFiles.length > 0"> -->
 
                        <div v-for="(file, index) of uploadedFiles" :key="file.name + file.type + file.size" class="flex border-1 surface-border border-round-3xl md:flex-grow-1 p-2 gap-4 text-center justify-content-around md:flex-row sm:flex-column">
                      
