@@ -7,6 +7,11 @@ import { onMounted, ref } from 'vue';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader';
 
+// Define contexts for assets
+// const skyboxesContext = require.context('@/assets/skyboxes', false, /\.glb$/);
+// const floorsContext = require.context('@/assets/floors', false, /\.glb$/);
+// const hdrsContext = require.context('@/assets/hdrs', false, /\.hdr$/);
+
 export function useEnvironmentLoader(scene, renderer) {
 
   const storage = getStorage(); // Make sure Firebase is initialized before calling this
@@ -15,21 +20,18 @@ export function useEnvironmentLoader(scene, renderer) {
   const floors = ref([]);
   const hdrs = ref([]);
 
-  const optimizeAssetURL = `https://us-east1-dprintprice.cloudfunctions.net/optimizeAsset?url=`;
+
 
   // Helper function to fetch asset URL from Firebase Storage
   async function fetchAssetURL(assetPath) {
     const fileRef = storageRef(storage, assetPath);
     try {
-      const originalAssetURL = await getDownloadURL(fileRef);
-      const optimizedAssetURL = `${optimizeAssetURL}${encodeURIComponent(originalAssetURL)}`;
-      return optimizedAssetURL;
+      return await getDownloadURL(fileRef);
     } catch (error) {
       console.error(`Error fetching asset URL for ${assetPath}:`, error);
       return ''; // Return an empty string or a default URL in case of an error
     }
   }
-  
   
   async function fetchAssetNames(folderPath, refList) {
     const listRef = storageRef(storage, folderPath);

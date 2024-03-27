@@ -10,9 +10,6 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 // const store = useStore();
 
 
-const optimizeAssetURL = `https://us-east1-dprintprice.cloudfunctions.net/optimizeAsset?url=`;
-
-
 export function usePrinterLoader(scene) {
   const storage = getStorage();
 
@@ -20,11 +17,10 @@ export function usePrinterLoader(scene) {
   async function fetchAssetURL(assetPath) {
     try {
       const storageRef = ref(storage, assetPath);
-      const originalAssetURL = await getDownloadURL(storageRef);
-      const optimizedAssetURL = `${optimizeAssetURL}${encodeURIComponent(originalAssetURL)}`;
-      return optimizedAssetURL;
+      return await getDownloadURL(storageRef);
     } catch (error) {
       console.error(`Error fetching asset URL from Firebase Storage: ${assetPath}`, error);
+      // You can throw a custom error to indicate permission issue
       throw new Error(`Permission error accessing asset: ${assetPath}`);
     }
   }
@@ -37,6 +33,7 @@ export function usePrinterLoader(scene) {
     const modelURL = await fetchAssetURL(`${basePath}/${printerFileName}.gltf`);
     const binURL = await fetchAssetURL(`${basePath}/${printerFileName}.bin`); // Assuming bin file has the same name
     const textureURL = await fetchAssetURL(`${basePath}/textures/${textureName}.jpg`); // Replace with actual texture file name if different
+
     
 
     // Load the model using the GLTFLoader
@@ -108,4 +105,3 @@ export function usePrinterLoader(scene) {
 
   return { loadPrinter, updatePrinterAppearance };
 }
-
